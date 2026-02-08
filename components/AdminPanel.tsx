@@ -32,7 +32,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
   return (
     <>
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-24 right-6 z-50">
         <button
           onClick={isLoggedIn ? handleOpenDashboard : onToggle}
           className={`w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${isLoggedIn ? 'bg-rose-600 hover:bg-rose-500' : 'bg-slate-800 hover:bg-slate-700'}`}
@@ -42,8 +42,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
         {isAdmin && !isLoggedIn && (
           <div className="absolute bottom-16 right-0 w-80 glass rounded-[2rem] p-6 shadow-2xl border border-white/10 animate-in slide-in-from-bottom-5">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-orbitron text-lg font-bold uppercase tracking-tighter glory-gradient">Admin Portal</h3>
+              <button
+                onClick={onToggle}
+                className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
             <form onSubmit={handleLogin} className="space-y-4">
-              <h3 className="font-orbitron text-lg font-bold mb-3 uppercase tracking-tighter glory-gradient">Admin Portal</h3>
               <div>
                 <input
                   type="password"
