@@ -96,41 +96,87 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
 
       if (finalData.sport === 'Cricket') {
         finalData.details = {
-          overs: Number(d.overs) || 10,
-          wickets: 0, // Explicitly required as int
-          // We also keep these for UI state if needed by frontend, 
-          // but the backend strict validation requires 'overs' and 'wickets'.
-          scoreA: Number(d.scoreA) || 0,
-          scoreB: Number(d.scoreB) || 0,
+          oversA: Number(d.oversA) || 0,
           wicketsA: Number(d.wicketsA) || 0,
+          oversB: Number(d.oversB) || 0,
           wicketsB: Number(d.wicketsB) || 0,
+          currentInnings: d.currentInnings || 'TeamA'
         };
       } else if (finalData.sport === 'Football') {
         finalData.details = {
           halfTimeScoreA: Math.floor(Number(d.halfTimeScoreA) || 0),
           halfTimeScoreB: Math.floor(Number(d.halfTimeScoreB) || 0),
+          currentPeriod: d.currentPeriod || '1st Half'
         };
       } else if (finalData.sport === 'Volleyball') {
         finalData.details = {
           setsWonA: Math.floor(Number(d.setsWonA) || 0),
           setsWonB: Math.floor(Number(d.setsWonB) || 0),
+          currentSetScoreA: Math.floor(Number(d.currentSetScoreA) || 0),
+          currentSetScoreB: Math.floor(Number(d.currentSetScoreB) || 0)
+        };
+      } else if (finalData.sport === 'Badminton') {
+        finalData.details = {
+          setsWonA: Math.floor(Number(d.setsWonA) || 0),
+          setsWonB: Math.floor(Number(d.setsWonB) || 0),
+          currentSetScoreA: Math.floor(Number(d.currentSetScoreA) || 0),
+          currentSetScoreB: Math.floor(Number(d.currentSetScoreB) || 0)
         };
       } else if (finalData.sport === 'Kabaddi') {
         finalData.details = {
-          pointsA: Math.floor(Number(d.pointsA) || 0),
-          pointsB: Math.floor(Number(d.pointsB) || 0),
+          raidPointsA: Math.floor(Number(d.raidPointsA) || 0),
+          raidPointsB: Math.floor(Number(d.raidPointsB) || 0),
+          tacklePointsA: Math.floor(Number(d.tacklePointsA) || 0),
+          tacklePointsB: Math.floor(Number(d.tacklePointsB) || 0)
         };
       } else if (finalData.sport === 'Musical Chair') {
         finalData.details = {
           roundsCompleted: Math.floor(Number(d.roundsCompleted) || 0),
         };
+      } else if (finalData.sport === 'Kho-Kho') {
+        finalData.details = {
+          inningsA: Math.floor(Number(d.inningsA) || 0),
+          inningsB: Math.floor(Number(d.inningsB) || 0)
+        };
+      } else if (finalData.sport === 'LUDO') {
+        finalData.details = {
+          coinsA: Math.floor(Number(d.coinsA) || 0),
+          coinsB: Math.floor(Number(d.coinsB) || 0)
+        };
+      } else if (finalData.sport === 'Chess') {
+        finalData.details = {
+          movesPlayed: Math.floor(Number(d.movesPlayed) || 0)
+        };
+      } else if (finalData.sport === 'Carrom') {
+        finalData.details = {
+          boardsWonA: Math.floor(Number(d.boardsWonA) || 0),
+          boardsWonB: Math.floor(Number(d.boardsWonB) || 0)
+        };
       } else if (finalData.sport === 'Race') {
         finalData.details = {
           distance: Number(d.distance) || 100,
         };
+      } else if (finalData.sport === 'Skipping') {
+        finalData.details = {
+          jumps: Math.floor(Number(d.jumps) || 0)
+        };
+      } else if (finalData.sport === 'Tug of War') {
+        finalData.details = {
+          roundsWonA: Math.floor(Number(d.roundsWonA) || 0),
+          roundsWonB: Math.floor(Number(d.roundsWonB) || 0)
+        };
+      } else if (finalData.sport === 'Shot Put') {
+        finalData.details = {
+          distanceA: Number(d.distanceA) || 0,
+          distanceB: Number(d.distanceB) || 0
+        };
       } else if (finalData.sport === 'Needle & Thread') {
         finalData.details = {
           completed: Boolean(d.completed),
+        };
+      } else if (finalData.sport === 'Spoon Race') {
+        finalData.details = {
+          roundsCompleted: Math.floor(Number(d.roundsCompleted) || 0),
         };
       }
 
@@ -139,7 +185,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
         setError('Operation failed. Please try again.');
       }
     } catch (err) {
-      setError('An unexpected error occurred');
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -216,15 +262,20 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
           <label className="block text-sm font-medium text-slate-300 mb-2">
             Venue *
           </label>
-          <input
-            type="text"
+          <select
             name="venue"
             value={formData.venue}
             onChange={handleInputChange}
-            placeholder="e.g., Main Ground"
-            className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white placeholder-slate-400 focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
             required
-          />
+          >
+            <option value="">Select Venue</option>
+            <option value="Playground-1">Playground-1</option>
+            <option value="Playground-2">Playground-2</option>
+            <option value="Playground-3">Playground-3</option>
+            <option value="Playground-4">Playground-4</option>
+            <option value="Seminar-Hall">Seminar-Hall</option>
+          </select>
         </div>
 
         {/* Team A */}
@@ -293,178 +344,611 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
         )}
       </div>
 
-      {/* Dynamic Details Section */}
-      {formData.sport === 'Cricket' && (
+      {/* Dynamic Details Section Based on Sport Schema */}
+      {formData.sport && (
         <div className="pt-4 border-t border-slate-700">
-          <h4 className="text-white font-medium mb-3">Cricket Details</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="md:col-span-2">
+          <h4 className="text-white font-medium mb-3">{formData.sport} Details</h4>
+
+          {/* Cricket Fields */}
+          {formData.sport === 'Cricket' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Team A Overs *
+                </label>
+                <input
+                  type="number"
+                  name="oversA"
+                  value={formData.details.oversA || ''}
+                  onChange={handleDetailsChange}
+                  step="0.1"
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Team A Wickets *
+                </label>
+                <input
+                  type="number"
+                  name="wicketsA"
+                  value={formData.details.wicketsA || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  max="10"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Team B Overs *
+                </label>
+                <input
+                  type="number"
+                  name="oversB"
+                  value={formData.details.oversB || ''}
+                  onChange={handleDetailsChange}
+                  step="0.1"
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Team B Wickets *
+                </label>
+                <input
+                  type="number"
+                  name="wicketsB"
+                  value={formData.details.wicketsB || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  max="10"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Current Innings *
+                </label>
+                <select
+                  name="currentInnings"
+                  value={formData.details.currentInnings || ''}
+                  onChange={handleDetailsChange}
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">Select Innings</option>
+                  <option value="TeamA">Team A</option>
+                  <option value="TeamB">Team B</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {/* Football Fields */}
+          {formData.sport === 'Football' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Half Time Score A *
+                </label>
+                <input
+                  type="number"
+                  name="halfTimeScoreA"
+                  value={formData.details.halfTimeScoreA || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Half Time Score B *
+                </label>
+                <input
+                  type="number"
+                  name="halfTimeScoreB"
+                  value={formData.details.halfTimeScoreB || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Current Period *
+                </label>
+                <select
+                  name="currentPeriod"
+                  value={formData.details.currentPeriod || ''}
+                  onChange={handleDetailsChange}
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">Select Period</option>
+                  <option value="1st Half">1st Half</option>
+                  <option value="2nd Half">2nd Half</option>
+                  <option value="Extra">Extra</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {/* Volleyball Fields */}
+          {formData.sport === 'Volleyball' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Sets Won A *
+                </label>
+                <input
+                  type="number"
+                  name="setsWonA"
+                  value={formData.details.setsWonA || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Sets Won B *
+                </label>
+                <input
+                  type="number"
+                  name="setsWonB"
+                  value={formData.details.setsWonB || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Current Set Score A *
+                </label>
+                <input
+                  type="number"
+                  name="currentSetScoreA"
+                  value={formData.details.currentSetScoreA || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Current Set Score B *
+                </label>
+                <input
+                  type="number"
+                  name="currentSetScoreB"
+                  value={formData.details.currentSetScoreB || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Badminton Fields */}
+          {formData.sport === 'Badminton' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Sets Won A *
+                </label>
+                <input
+                  type="number"
+                  name="setsWonA"
+                  value={formData.details.setsWonA || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Sets Won B *
+                </label>
+                <input
+                  type="number"
+                  name="setsWonB"
+                  value={formData.details.setsWonB || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Current Set Score A *
+                </label>
+                <input
+                  type="number"
+                  name="currentSetScoreA"
+                  value={formData.details.currentSetScoreA || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Current Set Score B *
+                </label>
+                <input
+                  type="number"
+                  name="currentSetScoreB"
+                  value={formData.details.currentSetScoreB || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Kabaddi Fields */}
+          {formData.sport === 'Kabaddi' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Raid Points A *
+                </label>
+                <input
+                  type="number"
+                  name="raidPointsA"
+                  value={formData.details.raidPointsA || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Raid Points B *
+                </label>
+                <input
+                  type="number"
+                  name="raidPointsB"
+                  value={formData.details.raidPointsB || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Tackle Points A *
+                </label>
+                <input
+                  type="number"
+                  name="tacklePointsA"
+                  value={formData.details.tacklePointsA || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Tackle Points B *
+                </label>
+                <input
+                  type="number"
+                  name="tacklePointsB"
+                  value={formData.details.tacklePointsB || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Musical Chair Fields */}
+          {formData.sport === 'Musical Chair' && (
+            <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
-                Total Overs *
+                Rounds Completed *
               </label>
               <input
                 type="number"
-                name="overs"
-                value={formData.details.overs || ''}
+                name="roundsCompleted"
+                value={formData.details.roundsCompleted || ''}
                 onChange={handleDetailsChange}
+                min="0"
                 className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 required
               />
             </div>
+          )}
 
-            {/* Cricket Scores & Wickets - Required in details for creation */}
+          {/* Kho-Kho Fields */}
+          {formData.sport === 'Kho-Kho' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Innings A *
+                </label>
+                <input
+                  type="number"
+                  name="inningsA"
+                  value={formData.details.inningsA || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Innings B *
+                </label>
+                <input
+                  type="number"
+                  name="inningsB"
+                  value={formData.details.inningsB || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+            </div>
+          )}
+
+          {/* LUDO Fields */}
+          {formData.sport === 'LUDO' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Coins A *
+                </label>
+                <input
+                  type="number"
+                  name="coinsA"
+                  value={formData.details.coinsA || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Coins B *
+                </label>
+                <input
+                  type="number"
+                  name="coinsB"
+                  value={formData.details.coinsB || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Chess Fields */}
+          {formData.sport === 'Chess' && (
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Team A Runs</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Moves Played *
+              </label>
               <input
                 type="number"
-                name="scoreA"
-                value={formData.details.scoreA || 0}
+                name="movesPlayed"
+                value={formData.details.movesPlayed || ''}
                 onChange={handleDetailsChange}
+                min="0"
                 className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                required
               />
             </div>
+          )}
+
+          {/* Carrom Fields */}
+          {formData.sport === 'Carrom' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Boards Won A *
+                </label>
+                <input
+                  type="number"
+                  name="boardsWonA"
+                  value={formData.details.boardsWonA || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Boards Won B *
+                </label>
+                <input
+                  type="number"
+                  name="boardsWonB"
+                  value={formData.details.boardsWonB || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Race Fields */}
+          {formData.sport === 'Race' && (
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Team A Wickets</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Distance (meters) *
+              </label>
               <input
                 type="number"
-                name="wicketsA"
-                value={formData.details.wicketsA || 0}
+                name="distance"
+                value={formData.details.distance || ''}
                 onChange={handleDetailsChange}
-                max="10"
+                step="0.1"
+                min="0"
                 className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                required
               />
             </div>
+          )}
 
+          {/* Skipping Fields */}
+          {formData.sport === 'Skipping' && (
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Team B Runs</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Jumps *
+              </label>
               <input
                 type="number"
-                name="scoreB"
-                value={formData.details.scoreB || 0}
+                name="jumps"
+                value={formData.details.jumps || ''}
                 onChange={handleDetailsChange}
+                min="0"
                 className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                required
               />
             </div>
+          )}
+
+          {/* Tug of War Fields */}
+          {formData.sport === 'Tug of War' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Rounds Won A *
+                </label>
+                <input
+                  type="number"
+                  name="roundsWonA"
+                  value={formData.details.roundsWonA || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Rounds Won B *
+                </label>
+                <input
+                  type="number"
+                  name="roundsWonB"
+                  value={formData.details.roundsWonB || ''}
+                  onChange={handleDetailsChange}
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Shot Put Fields */}
+          {formData.sport === 'Shot Put' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Distance A (meters) *
+                </label>
+                <input
+                  type="number"
+                  name="distanceA"
+                  value={formData.details.distanceA || ''}
+                  onChange={handleDetailsChange}
+                  step="0.1"
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Distance B (meters) *
+                </label>
+                <input
+                  type="number"
+                  name="distanceB"
+                  value={formData.details.distanceB || ''}
+                  onChange={handleDetailsChange}
+                  step="0.1"
+                  min="0"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Needle & Thread Fields */}
+          {formData.sport === 'Needle & Thread' && (
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                name="completed"
+                checked={!!formData.details.completed}
+                onChange={(e) => setFormData(prev => ({
+                  ...prev,
+                  details: { ...prev.details, completed: e.target.checked }
+                }))}
+                className="h-4 w-4 bg-slate-700 border-slate-600 rounded focus:ring-rose-500"
+              />
+              <label className="ml-2 block text-sm font-medium text-slate-300">
+                Completed
+              </label>
+            </div>
+          )}
+
+          {/* Spoon Race Fields */}
+          {formData.sport === 'Spoon Race' && (
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Team B Wickets</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Rounds Completed *
+              </label>
               <input
                 type="number"
-                name="wicketsB"
-                value={formData.details.wicketsB || 0}
+                name="roundsCompleted"
+                value={formData.details.roundsCompleted || ''}
                 onChange={handleDetailsChange}
-                max="10"
+                min="0"
                 className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                required
               />
             </div>
-          </div>
-        </div>
-      )}
-
-      {(formData.sport === 'Football' || formData.sport === 'Volleyball' || formData.sport === 'Kabaddi') && (
-        <div className="pt-4 border-t border-slate-700">
-          <h4 className="text-white font-medium mb-3">{formData.sport} Details</h4>
-          <div className="grid grid-cols-2 gap-4">
-            {/* We can add specific fields here if needed, but for now just basic initialization is handled in useEffect. 
-                 If we want to allow editing "Half Time Score" or "Sets Won", we add inputs here. 
-                 Let's add them for completeness as they are in the schema. */}
-
-            {formData.sport === 'Football' && (
-              <>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Half Time Score A</label>
-                  <input type="number" name="halfTimeScoreA" value={formData.details.halfTimeScoreA || 0} onChange={handleDetailsChange} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Half Time Score B</label>
-                  <input type="number" name="halfTimeScoreB" value={formData.details.halfTimeScoreB || 0} onChange={handleDetailsChange} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white" />
-                </div>
-              </>
-            )}
-
-            {formData.sport === 'Volleyball' && (
-              <>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Sets Won A</label>
-                  <input type="number" name="setsWonA" value={formData.details.setsWonA || 0} onChange={handleDetailsChange} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Sets Won B</label>
-                  <input type="number" name="setsWonB" value={formData.details.setsWonB || 0} onChange={handleDetailsChange} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white" />
-                </div>
-              </>
-            )}
-
-            {formData.sport === 'Kabaddi' && (
-              <>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Points A</label>
-                  <input type="number" name="pointsA" value={formData.details.pointsA || 0} onChange={handleDetailsChange} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Points B</label>
-                  <input type="number" name="pointsB" value={formData.details.pointsB || 0} onChange={handleDetailsChange} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white" />
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-
-      {formData.sport === 'Race' && (
-        <div className="pt-4 border-t border-slate-700">
-          <h4 className="text-white font-medium mb-3">Race Details</h4>
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Distance (meters) *
-            </label>
-            <input
-              type="number"
-              name="distance"
-              value={formData.details.distance || ''}
-              onChange={handleDetailsChange}
-              className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-              required
-            />
-          </div>
-        </div>
-      )}
-
-      {formData.sport === 'Musical Chair' && (
-        <div className="pt-4 border-t border-slate-700">
-          <h4 className="text-white font-medium mb-3">Musical Chair Details</h4>
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Rounds Completed
-            </label>
-            <input
-              type="number"
-              name="roundsCompleted"
-              value={formData.details.roundsCompleted || 0}
-              onChange={handleDetailsChange}
-              className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-            />
-          </div>
-        </div>
-      )}
-
-      {formData.sport === 'Needle & Thread' && (
-        <div className="pt-4 border-t border-slate-700">
-          <h4 className="text-white font-medium mb-3">Needle & Thread Details</h4>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              name="completed"
-              checked={!!formData.details.completed}
-              onChange={(e) => setFormData(prev => ({
-                ...prev,
-                details: { ...prev.details, completed: e.target.checked }
-              }))}
-              className="h-4 w-4 bg-slate-700 border-slate-600 rounded focus:ring-rose-500"
-            />
-            <label className="ml-2 block text-sm font-medium text-slate-300">
-              Completed
-            </label>
-          </div>
+          )}
         </div>
       )}
 

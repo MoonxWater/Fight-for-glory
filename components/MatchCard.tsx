@@ -22,6 +22,21 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
     }
   };
 
+  const getGenderColor = (gender: string) => {
+    switch (gender?.toLowerCase()) {
+      case 'boys': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'girls': return 'bg-pink-500/20 text-pink-400 border-pink-500/30';
+      default: return 'bg-slate-500/20 text-slate-400 border-slate-500/30';
+    }
+  };
+
+  const getGenderIcon = (gender: string) => {
+    switch (gender?.toLowerCase()) {
+      case 'boys': return 'fa-mars';
+      case 'girls': return 'fa-venus';
+      default: return 'fa-users';
+    }
+  };
 
   const handleAISummary = async () => {
     setLoadingAI(true);
@@ -42,6 +57,16 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
           {match.status}
         </span>
       </div>
+
+      {/* Gender Pill */}
+      {match.gender && (
+        <div className="mb-4">
+          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getGenderColor(match.gender)}`}>
+            <i className={`fa-solid ${getGenderIcon(match.gender)} text-[8px]`}></i>
+            {match.gender}
+          </span>
+        </div>
+      )}
 
       <div className="flex items-center justify-between gap-4 mb-8">
         <div className="flex flex-col items-center text-center flex-1">

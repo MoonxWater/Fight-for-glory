@@ -26,6 +26,22 @@ export const MatchList: React.FC<MatchListProps> = ({ matches, onEdit, onDelete,
     }
   };
 
+  const getGenderColor = (gender: string) => {
+    switch (gender?.toLowerCase()) {
+      case 'boys': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'girls': return 'bg-pink-500/20 text-pink-400 border-pink-500/30';
+      default: return 'bg-slate-500/20 text-slate-400 border-slate-500/30';
+    }
+  };
+
+  const getGenderIcon = (gender: string) => {
+    switch (gender?.toLowerCase()) {
+      case 'boys': return 'fa-mars';
+      case 'girls': return 'fa-venus';
+      default: return 'fa-users';
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'LIVE': return 'bg-green-500/20 text-green-400 border-green-500/50';
@@ -89,6 +105,7 @@ export const MatchList: React.FC<MatchListProps> = ({ matches, onEdit, onDelete,
               <thead className="bg-slate-900 border-b border-slate-700">
                 <tr>
                   <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Sport</th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Gender</th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Teams</th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Score</th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Status</th>
@@ -101,6 +118,14 @@ export const MatchList: React.FC<MatchListProps> = ({ matches, onEdit, onDelete,
                   <tr key={match.id} className="hover:bg-slate-700/50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-white">{match.sport}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {match.gender && (
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getGenderColor(match.gender)}`}>
+                          <i className={`fa-solid ${getGenderIcon(match.gender)} text-[8px]`}></i>
+                          {match.gender}
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-white">

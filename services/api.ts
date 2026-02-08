@@ -28,12 +28,60 @@ const getHeaders = (isAdmin = false) => {
   return headers;
 };
 
+const parseErrorResponse = async (response: Response): Promise<string> => {
+  const contentType = response.headers.get('content-type');
+
+  try {
+    if (contentType && contentType.includes('application/json')) {
+      const errorData = await response.json();
+      return errorData.message || errorData.error || JSON.stringify(errorData);
+    } else {
+      // Handle HTML error responses
+      const errorText = await response.text();
+
+      // Extract meaningful error from HTML
+      if (errorText.includes('<!DOCTYPE html>') || errorText.includes('<html')) {
+        // Try to extract title or error message from HTML
+        const titleMatch = errorText.match(/<title>(.*?)<\/title>/i);
+        if (titleMatch) {
+          return titleMatch[1].replace(/[^a-zA-Z0-9\s]/g, '').trim();
+        }
+
+        // Look for common error patterns in HTML
+        const errorPatterns = [
+          /<h[1-6][^>]*>(.*?)<\/h[1-6]>/gi,
+          /<p[^>]*class="error"[^>]*>(.*?)<\/p>/gi,
+          /<div[^>]*class="error"[^>]*>(.*?)<\/div>/gi
+        ];
+
+        for (const pattern of errorPatterns) {
+          const matches = errorText.match(pattern);
+          if (matches && matches.length > 0) {
+            return matches[0].replace(/<[^>]*>/g, '').trim();
+          }
+        }
+
+        // Fallback to HTTP status message
+        return response.statusText || `HTTP ${response.status} Error`;
+      }
+
+      return errorText;
+    }
+  } catch (parseError) {
+    console.error('Error parsing error response:', parseError);
+    return response.statusText || `HTTP ${response.status} Error`;
+  }
+};
+
 export const api = {
   getGamesByGender: async (gender: 'boys' | 'girls'): Promise<string[]> => {
     try {
       console.log(`Fetching ${gender} games from API...`);
       const res = await fetch(`${BASE_URL}/sports/games/${gender}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        const errorMessage = await parseErrorResponse(res);
+        throw new Error(`Failed to fetch games: ${res.status} - ${errorMessage}`);
+      }
       const data = await res.json();
       console.log(`Fetched ${gender} games:`, data.games);
       return data.games || [];
@@ -47,7 +95,10 @@ export const api = {
     try {
       console.log('Fetching upcoming matches from API...');
       const res = await fetch(`${BASE_URL}/matches/upcoming`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        const errorMessage = await parseErrorResponse(res);
+        throw new Error(`Failed to fetch upcoming matches: ${res.status} - ${errorMessage}`);
+      }
       const data = await res.json();
       console.log('Fetched upcoming matches:', data);
       return data;
@@ -61,7 +112,10 @@ export const api = {
     try {
       console.log(`Fetching match with filters: gender=${gender}, sport=${sport}, id=${matchId}`);
       const res = await fetch(`${BASE_URL}/matches/gender/${gender}/${sport}/${matchId}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        const errorMessage = await parseErrorResponse(res);
+        throw new Error(`Failed to fetch match: ${res.status} - ${errorMessage}`);
+      }
       const data = await res.json();
       console.log('Fetched filtered match:', data);
       return data;
@@ -75,7 +129,10 @@ export const api = {
     try {
       console.log(`Fetching matches for sport: ${sport}`);
       const res = await fetch(`${BASE_URL}/matches/sport/${sport}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        const errorMessage = await parseErrorResponse(res);
+        throw new Error(`Failed to fetch ${sport} matches: ${res.status} - ${errorMessage}`);
+      }
       const data = await res.json();
       console.log(`Fetched ${sport} matches:`, data);
       return data;
@@ -91,7 +148,10 @@ export const api = {
       const res = await fetch(`${BASE_URL}/matches?t=${Date.now()}`, {
         headers: getHeaders(false)
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        const errorMessage = await parseErrorResponse(res);
+        throw new Error(`Failed to fetch matches: ${res.status} - ${errorMessage}`);
+      }
       const data = await res.json();
       console.log('Fetched matches:', data);
       console.log('Number of matches:', data.length);
@@ -130,9 +190,9 @@ export const api = {
     console.log('Response headers:', Object.fromEntries(res.headers.entries()));
 
     if (!res.ok) {
-      const errorText = await res.text();
-      console.error('Error response:', errorText);
-      throw new Error(`Failed to create match: ${res.status} - ${errorText}`);
+      const errorMessage = await parseErrorResponse(res);
+      console.error('Error response:', errorMessage);
+      throw new Error(`Failed to create match: ${res.status} - ${errorMessage}`);
     }
     return await res.json();
   },
@@ -152,9 +212,9 @@ export const api = {
     console.log('Response headers:', Object.fromEntries(res.headers.entries()));
 
     if (!res.ok) {
-      const errorText = await res.text();
-      console.error('Error response:', errorText);
-      throw new Error(`Failed to update match: ${res.status} - ${errorText}`);
+      const errorMessage = await parseErrorResponse(res);
+      console.error('Error response:', errorMessage);
+      throw new Error(`Failed to update match: ${res.status} - ${errorMessage}`);
     }
     return await res.json();
   },
@@ -179,15 +239,15 @@ export const api = {
     console.log('Response headers:', Object.fromEntries(res.headers.entries()));
 
     if (!res.ok) {
-      const errorText = await res.text();
-      console.error('Error response:', errorText);
+      const errorMessage = await parseErrorResponse(res);
+      console.error('Error response:', errorMessage);
 
       if (res.status === 404) {
         throw new Error('Match not found. It may have already been deleted or the match ID is invalid.');
       } else if (res.status === 401) {
         throw new Error('Unauthorized. Please check your admin access.');
       } else {
-        throw new Error(`Failed to delete match: ${res.status} - ${errorText}`);
+        throw new Error(`Failed to delete match: ${res.status} - ${errorMessage}`);
       }
     }
     return true;

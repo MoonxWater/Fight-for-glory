@@ -27,6 +27,7 @@ const App: React.FC = () => {
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [viewState, setViewState] = useState<ViewState>('LANDING');
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [activeSport, setActiveSport] = useState<string | null>(null);
@@ -175,8 +176,9 @@ const App: React.FC = () => {
       setMatches(prev => prev.map(m => m.id === id ? { ...m, ...updates } : m));
       await api.updateMatch(id, updates);
       fetchData(); // Sync exact state
+      setError(null);
     } catch (err: any) {
-      alert("Update failed: " + err.message);
+      setError(err.message);
       fetchData(); // Revert
     }
   };
@@ -186,78 +188,240 @@ const App: React.FC = () => {
     try {
       await api.deleteMatch(id);
       fetchData();
+      setError(null);
     } catch (err: any) {
       console.error('Delete error:', err);
       // If match not found, refresh data to remove it from UI
       if (err.message.includes('not found')) {
         fetchData();
-        alert('Match was not found on server. Refreshing data...');
+        setError('Match was not found on server. Refreshing data...');
       } else {
-        alert(err.message);
+        setError(err.message);
       }
     }
   };
 
   const scheduleMatch = async () => {
-    if (!isAdmin || !activeSport) return;
+    if (!isAdmin) return;
+
+    // First select sport based on active category
+    let selectedSport: string;
+    if (activeCategory === 'Boys') {
+      const boySports = ['Cricket', 'Football', 'Volleyball', 'Carrom', 'Kabaddi', 'Badminton', 'Chess', 'Race', 'Tug of War', 'Kho-Kho', 'Musical Chair', 'LUDO'];
+      const sportOptions = boySports.join(', ');
+      selectedSport = prompt(`Enter Sport for Boys (${sportOptions}):`);
+    } else if (activeCategory === 'Girls') {
+      const girlSports = ['Cricket', 'Football', 'Volleyball', 'Carrom', 'Kabaddi', 'Badminton', 'Chess', 'Race', 'Tug of War', 'Kho-Kho', 'Musical Chair', 'LUDO', 'Needle & Thread', 'Spoon Race', 'Shot Put', 'Skipping'];
+      const sportOptions = girlSports.join(', ');
+      selectedSport = prompt(`Enter Sport for Girls (${sportOptions}):`);
+    } else {
+      alert('Please select a category first (Boys or Girls)');
+      return;
+    }
+
+    if (!selectedSport) return;
+
     const teamA = prompt("Enter Team A Name:");
     if (!teamA) return;
     const teamB = prompt("Enter Team B Name:");
     if (!teamB) return;
-
-    // Venue is mandatory for some sports, so let's make it required or default it
     const venue = prompt("Enter Venue (Required):", "Main Ground");
     if (!venue) return;
 
     let details: any = {};
-    const defaultZero = 0;
 
-    switch (activeSport) {
+    switch (selectedSport) {
       case 'Cricket': {
-        const overs = prompt("Enter Overs (Required):", "10");
-        if (!overs) return;
-        details.overs = parseInt(overs);
-        details.wicketsA = 0; // Initialize
-        details.wicketsB = 0;
+        const oversA = prompt("Enter Overs for Team A:");
+        const oversB = prompt("Enter Overs for Team B:");
+        const wicketsA = prompt("Enter Wickets for Team A:");
+        const wicketsB = prompt("Enter Wickets for Team B:");
+        const currentInnings = prompt("Current Innings (TeamA/TeamB):", "TeamA");
+        if (oversA && oversB && wicketsA && wicketsB && currentInnings) {
+          details = {
+            oversA: parseFloat(oversA),
+            wicketsA: parseInt(wicketsA),
+            oversB: parseFloat(oversB),
+            wicketsB: parseInt(wicketsB),
+            currentInnings: currentInnings
+          };
+        }
         break;
       }
       case 'Football': {
-        details.halfTimeScoreA = 0;
-        details.halfTimeScoreB = 0;
+        const halfTimeScoreA = prompt("Enter Half Time Score for Team A:");
+        const halfTimeScoreB = prompt("Enter Half Time Score for Team B:");
+        const currentPeriod = prompt("Current Period (1st Half/2nd Half/Extra):", "1st Half");
+        if (halfTimeScoreA && halfTimeScoreB && currentPeriod) {
+          details = {
+            halfTimeScoreA: parseInt(halfTimeScoreA),
+            halfTimeScoreB: parseInt(halfTimeScoreB),
+            currentPeriod: currentPeriod
+          };
+        }
         break;
       }
       case 'Volleyball': {
-        details.setsWonA = 0;
-        details.setsWonB = 0;
+        const setsWonA = prompt("Enter Sets Won by Team A:");
+        const setsWonB = prompt("Enter Sets Won by Team B:");
+        const currentSetScoreA = prompt("Enter Current Set Score for Team A:");
+        const currentSetScoreB = prompt("Enter Current Set Score for Team B:");
+        if (setsWonA && setsWonB && currentSetScoreA && currentSetScoreB) {
+          details = {
+            setsWonA: parseInt(setsWonA),
+            setsWonB: parseInt(setsWonB),
+            currentSetScoreA: parseInt(currentSetScoreA),
+            currentSetScoreB: parseInt(currentSetScoreB)
+          };
+        }
+        break;
+      }
+      case 'Badminton': {
+        const setsWonA = prompt("Enter Sets Won by Team A:");
+        const setsWonB = prompt("Enter Sets Won by Team B:");
+        const currentSetScoreA = prompt("Enter Current Set Score for Team A:");
+        const currentSetScoreB = prompt("Enter Current Set Score for Team B:");
+        if (setsWonA && setsWonB && currentSetScoreA && currentSetScoreB) {
+          details = {
+            setsWonA: parseInt(setsWonA),
+            setsWonB: parseInt(setsWonB),
+            currentSetScoreA: parseInt(currentSetScoreA),
+            currentSetScoreB: parseInt(currentSetScoreB)
+          };
+        }
         break;
       }
       case 'Kabaddi': {
-        details.pointsA = 0;
-        details.pointsB = 0;
+        const raidPointsA = prompt("Enter Raid Points for Team A:");
+        const raidPointsB = prompt("Enter Raid Points for Team B:");
+        const tacklePointsA = prompt("Enter Tackle Points for Team A:");
+        const tacklePointsB = prompt("Enter Tackle Points for Team B:");
+        if (raidPointsA && raidPointsB && tacklePointsA && tacklePointsB) {
+          details = {
+            raidPointsA: parseInt(raidPointsA),
+            raidPointsB: parseInt(raidPointsB),
+            tacklePointsA: parseInt(tacklePointsA),
+            tacklePointsB: parseInt(tacklePointsB)
+          };
+        }
         break;
       }
       case 'Musical Chair': {
-        details.roundsCompleted = 0;
+        const roundsCompleted = prompt("Enter Rounds Completed:");
+        if (roundsCompleted) {
+          details = {
+            roundsCompleted: parseInt(roundsCompleted)
+          };
+        }
+        break;
+      }
+      case 'Kho-Kho': {
+        const inningsA = prompt("Enter Innings for Team A:");
+        const inningsB = prompt("Enter Innings for Team B:");
+        if (inningsA && inningsB) {
+          details = {
+            inningsA: parseInt(inningsA),
+            inningsB: parseInt(inningsB)
+          };
+        }
+        break;
+      }
+      case 'LUDO': {
+        const coinsA = prompt("Enter Coins for Team A:");
+        const coinsB = prompt("Enter Coins for Team B:");
+        if (coinsA && coinsB) {
+          details = {
+            coinsA: parseInt(coinsA),
+            coinsB: parseInt(coinsB)
+          };
+        }
+        break;
+      }
+      case 'Chess': {
+        const movesPlayed = prompt("Enter Moves Played:");
+        if (movesPlayed) {
+          details = {
+            movesPlayed: parseInt(movesPlayed)
+          };
+        }
+        break;
+      }
+      case 'Carrom': {
+        const boardsWonA = prompt("Enter Boards Won by Team A:");
+        const boardsWonB = prompt("Enter Boards Won by Team B:");
+        if (boardsWonA && boardsWonB) {
+          details = {
+            boardsWonA: parseInt(boardsWonA),
+            boardsWonB: parseInt(boardsWonB)
+          };
+        }
         break;
       }
       case 'Race': {
-        const distance = prompt("Enter Race Distance (meters):", "100");
-        if (!distance) return;
-        details.distance = parseFloat(distance);
+        const distance = prompt("Enter Race Distance (meters):");
+        if (distance) {
+          details = {
+            distance: parseFloat(distance)
+          };
+        }
+        break;
+      }
+      case 'Skipping': {
+        const jumps = prompt("Enter Number of Jumps:");
+        if (jumps) {
+          details = {
+            jumps: parseInt(jumps)
+          };
+        }
+        break;
+      }
+      case 'Tug of War': {
+        const roundsWonA = prompt("Enter Rounds Won by Team A:");
+        const roundsWonB = prompt("Enter Rounds Won by Team B:");
+        if (roundsWonA && roundsWonB) {
+          details = {
+            roundsWonA: parseInt(roundsWonA),
+            roundsWonB: parseInt(roundsWonB)
+          };
+        }
+        break;
+      }
+      case 'Shot Put': {
+        const distanceA = prompt("Enter Distance for Team A (meters):");
+        const distanceB = prompt("Enter Distance for Team B (meters):");
+        if (distanceA && distanceB) {
+          details = {
+            distanceA: parseFloat(distanceA),
+            distanceB: parseFloat(distanceB)
+          };
+        }
         break;
       }
       case 'Needle & Thread': {
-        details.completed = false;
+        const completed = prompt("Is Needle & Thread completed? (true/false):", "false");
+        if (completed) {
+          details = {
+            completed: completed.toLowerCase() === 'true'
+          };
+        }
         break;
       }
-      // Add other cases as needed or default to empty
+      case 'Spoon Race': {
+        const roundsCompleted = prompt("Enter Rounds Completed:");
+        if (roundsCompleted) {
+          details = {
+            roundsCompleted: parseInt(roundsCompleted)
+          };
+        }
+        break;
+      }
       default:
         break;
     }
 
     try {
       await api.createMatch({
-        sport: activeSport,
+        sport: selectedSport,
         teamA,
         teamB,
         scoreA: 0,
@@ -269,12 +433,11 @@ const App: React.FC = () => {
       });
       await fetchData();
       if (activeCategory) {
-        // Refresh games list too in case this was a new sport (though user selected valid sport)
         fetchGamesForCategory(activeCategory);
       }
-      alert("Match scheduled successfully!");
+      setError(null);
     } catch (err: any) {
-      alert("Scheduling failed: " + err.message);
+      setError("Scheduling failed: " + err.message);
     }
   };
 
@@ -409,6 +572,21 @@ const App: React.FC = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-12">
+        {/* Error Display */}
+        {error && (
+          <div className="bg-red-500/20 border border-red-500/50 text-red-300 p-4 rounded-xl mb-6 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <i className="fa-solid fa-exclamation-triangle"></i>
+              <span>{error}</span>
+            </div>
+            <button
+              onClick={() => setError(null)}
+              className="text-red-400 hover:text-red-300 transition-colors"
+            >
+              <i className="fa-solid fa-times"></i>
+            </button>
+          </div>
+        )}
         {viewState === 'LANDING' && (
           <div className="space-y-20 animate-in fade-in zoom-in-95 duration-700">
             <div className="text-center max-w-5xl mx-auto space-y-8">
@@ -711,7 +889,7 @@ const App: React.FC = () => {
       />
 
       <footer className="mt-24 border-t border-white/5 py-16 opacity-30 text-center uppercase text-[10px] font-black tracking-[0.5em]">
-        Maulana Azad College of Engineering and Technology • Fight for Glory 2026 • Website Developed by MD Al Fahad Ahmed (2k22) and Seraj Muneer Faridy (2k25)
+        MACET • Fight for Glory 2026 • Developed by MD Al Fahad Ahmed and Seraj Muneer Faridy
       </footer>
     </div>
   );

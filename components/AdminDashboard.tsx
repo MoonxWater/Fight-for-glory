@@ -70,9 +70,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       await api.createMatch(matchData);
       setShowCreateForm(false);
       setRefreshKey(prev => prev + 1);
+      setError(null); // Clear any existing errors on success
       return true;
     } catch (err) {
       console.error('Error creating match:', err);
+      // Don't set error here - let MatchForm handle its own error display
       return false;
     }
   };
@@ -82,9 +84,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       await api.updateMatch(id, updates);
       setEditingMatch(null);
       setRefreshKey(prev => prev + 1);
+      setError(null); // Clear any existing errors on success
       return true;
     } catch (err) {
       console.error('Error updating match:', err);
+      setError(err instanceof Error ? err.message : 'Failed to update match');
       return false;
     }
   };
@@ -93,9 +97,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     try {
       await api.deleteMatch(id);
       setRefreshKey(prev => prev + 1);
+      setError(null); // Clear any existing errors on success
       return true;
     } catch (err) {
       console.error('Error deleting match:', err);
+      setError(err instanceof Error ? err.message : 'Failed to delete match');
       return false;
     }
   };

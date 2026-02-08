@@ -1,7 +1,7 @@
 import { SportType } from './types';
 
 export const BOYS_SPORTS: SportType[] = [
-  'Cricket', 'Football', 'Volleyball', 'Carrom', 'Kabaddi', 'Badminton', 'Chess', 'Race'
+  'Cricket', 'Football', 'Volleyball', 'Carrom', 'Kabaddi', 'Badminton', 'Chess', 'Race', 'Needle & Thread'
 ];
 
 export const GIRLS_SPORTS: SportType[] = [
@@ -20,7 +20,8 @@ export const SPORT_ICONS: Record<SportType, string> = {
   'Tug of War': 'fa-hands-holding-child',
   'Ludo': 'fa-dice',
   'Musical Chair': 'fa-chair',
-  'Kho-Kho': 'fa-arrows-rotate'
+  'Kho-Kho': 'fa-arrows-rotate',
+  'Needle & Thread': 'fa-needle',
 };
 
 export const SPORT_CONFIG: Record<SportType, { type: 'TEAM' | 'SOLO' }> = {
@@ -35,5 +36,6 @@ export const SPORT_CONFIG: Record<SportType, { type: 'TEAM' | 'SOLO' }> = {
   'Badminton': { type: 'SOLO' },
   'Chess': { type: 'SOLO' },
   'Race': { type: 'SOLO' },
-  'Ludo': { type: 'SOLO' }
+  'Ludo': { type: 'SOLO' },
+  'Needle & Thread': { type: 'SOLO' }
 };
