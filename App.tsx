@@ -35,17 +35,30 @@ const App: React.FC = () => {
   // Check for existing admin session on mount
   useEffect(() => {
     const savedAdminKey = localStorage.getItem('adminKey');
-    if (savedAdminKey) {
-      setAdminKey(savedAdminKey);
+    console.log('Found saved admin key:', savedAdminKey);
+    if (savedAdminKey && savedAdminKey === 'college2026') {
+      setAdminKey('fight-for-glory'); // This will set API key to fight-for-glory
       setIsAdmin(true);
+      console.log('Admin session restored with key:', savedAdminKey);
+    } else if (savedAdminKey) {
+      // Clear invalid saved key
+      console.log('Clearing invalid admin key:', savedAdminKey);
+      localStorage.removeItem('adminKey');
     }
   }, []);
 
   const handleLogin = (key: string) => {
-    setAdminKey(key);
-    localStorage.setItem('adminKey', key); // Save to localStorage
-    setIsAdmin(true);
-    setShowAdminPanel(false);
+    // Validate the admin key before granting access
+    if (key === 'college2026') {
+      setAdminKey('fight-for-glory'); // This will set API key to fight-for-glory
+      localStorage.setItem('adminKey', key); // Save the UI key (college2026)
+      setIsAdmin(true);
+      setShowAdminPanel(false);
+    } else {
+      alert('Invalid admin key! Access denied.');
+      // Clear the input and keep panel open for retry
+      setShowAdminPanel(true);
+    }
   };
 
   const handleLogout = () => {
@@ -76,12 +89,13 @@ const App: React.FC = () => {
 
   const fetchLiveMatches = async () => {
     // Only poll live matches on views that need real-time updates
-    if (!['SPORT_DETAIL', 'LEADERBOARD'].includes(viewState)) {
+    if (!['SPORT_DETAIL', 'LEADERBOARD', 'MATCHES'].includes(viewState)) {
       return;
     }
 
     try {
-      const liveMatches = await api.getLiveMatches();
+      const allMatches = await api.getMatches();
+      const liveMatches = allMatches.filter(m => m.status === 'LIVE');
       // Update only live matches in existing matches array
       setMatches(prev => {
         const nonLiveMatches = prev.filter(m => m.status !== 'LIVE');
@@ -173,7 +187,14 @@ const App: React.FC = () => {
       await api.deleteMatch(id);
       fetchData();
     } catch (err: any) {
-      alert(err.message);
+      console.error('Delete error:', err);
+      // If match not found, refresh data to remove it from UI
+      if (err.message.includes('not found')) {
+        fetchData();
+        alert('Match was not found on server. Refreshing data...');
+      } else {
+        alert(err.message);
+      }
     }
   };
 
@@ -183,6 +204,7 @@ const App: React.FC = () => {
     if (!teamA) return;
     const teamB = prompt("Enter Team B Name:");
     if (!teamB) return;
+    const venue = prompt("Enter Venue (optional):") || undefined;
 
     try {
       await api.createMatch({
@@ -191,7 +213,9 @@ const App: React.FC = () => {
         teamB,
         scoreA: 0,
         scoreB: 0,
-        status: 'UPCOMING'
+        status: 'UPCOMING',
+        gender: activeCategory?.toLowerCase() || 'boys',
+        venue: venue
       });
       fetchData();
     } catch (err: any) {
@@ -256,7 +280,7 @@ const App: React.FC = () => {
           </div>
 
           <nav className="hidden md:flex items-center gap-10">
-            {['LANDING', 'LEADERBOARD', 'LIVE_STREAM'].map((v) => (
+            {['LANDING', 'LEADERBOARD', 'MATCHES', 'LIVE_STREAM'].map((v) => (
               <button
                 key={v}
                 onClick={() => { setViewState(v as ViewState); setActiveCategory(null); }}
@@ -451,6 +475,108 @@ const App: React.FC = () => {
           </div>
         )}
 
+        {viewState === 'MATCHES' && (
+          <div className="space-y-12 animate-in fade-in">
+            <h2 className="font-orbitron text-7xl font-black uppercase italic tracking-tighter text-center pr-12">BATTLE <span className="glory-gradient">ARENA</span></h2>
+
+            {/* Live Matches */}
+            <div className="space-y-6">
+              <h3 className="font-oswald text-3xl font-bold uppercase flex items-center gap-3 tracking-widest text-rose-500">
+                <span className="w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
+                Live Matches
+              </h3>
+              {matches.filter(m => m.status === 'LIVE').length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {matches.filter(m => m.status === 'LIVE').map(m => (
+                    <div key={m.id} className="relative group">
+                      <MatchCard
+                        match={m}
+                        teamA={m.teamA}
+                        teamB={m.teamB}
+                        isAdmin={isAdmin}
+                        onUpdate={updateMatch}
+                      />
+                      {isAdmin && (
+                        <button onClick={() => handleDeleteMatch(m.id)} className="absolute top-4 right-4 text-slate-500 hover:text-red-500 transition-colors p-2 glass rounded-full shadow-lg opacity-0 group-hover:opacity-100">
+                          <i className="fa-solid fa-xmark"></i>
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-12 text-center glass rounded-[3rem] border-2 border-dashed border-slate-800 uppercase text-[10px] font-black text-slate-700 tracking-widest">
+                  No Live Matches Currently
+                </div>
+              )}
+            </div>
+
+            {/* Upcoming Matches */}
+            <div className="space-y-6">
+              <h3 className="font-oswald text-3xl font-bold uppercase flex items-center gap-3 tracking-widest text-indigo-400">
+                <i className="fa-solid fa-clock"></i>
+                Upcoming Battles
+              </h3>
+              {matches.filter(m => m.status === 'UPCOMING').length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {matches.filter(m => m.status === 'UPCOMING').map(m => (
+                    <div key={m.id} className="relative group">
+                      <MatchCard
+                        match={m}
+                        teamA={m.teamA}
+                        teamB={m.teamB}
+                        isAdmin={isAdmin}
+                        onUpdate={updateMatch}
+                      />
+                      {isAdmin && (
+                        <button onClick={() => handleDeleteMatch(m.id)} className="absolute top-4 right-4 text-slate-500 hover:text-red-500 transition-colors p-2 glass rounded-full shadow-lg opacity-0 group-hover:opacity-100">
+                          <i className="fa-solid fa-xmark"></i>
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-12 text-center glass rounded-[3rem] border-2 border-dashed border-slate-800 uppercase text-[10px] font-black text-slate-700 tracking-widest">
+                  No Upcoming Matches Scheduled
+                </div>
+              )}
+            </div>
+
+            {/* Completed Matches */}
+            <div className="space-y-6">
+              <h3 className="font-oswald text-3xl font-bold uppercase flex items-center gap-3 tracking-widest text-slate-500">
+                <i className="fa-solid fa-trophy"></i>
+                Completed Battles
+              </h3>
+              {matches.filter(m => m.status === 'COMPLETED').length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {matches.filter(m => m.status === 'COMPLETED').map(m => (
+                    <div key={m.id} className="relative group">
+                      <MatchCard
+                        match={m}
+                        teamA={m.teamA}
+                        teamB={m.teamB}
+                        isAdmin={isAdmin}
+                        onUpdate={updateMatch}
+                      />
+                      {isAdmin && (
+                        <button onClick={() => handleDeleteMatch(m.id)} className="absolute top-4 right-4 text-slate-500 hover:text-red-500 transition-colors p-2 glass rounded-full shadow-lg opacity-0 group-hover:opacity-100">
+                          <i className="fa-solid fa-xmark"></i>
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-12 text-center glass rounded-[3rem] border-2 border-dashed border-slate-800 uppercase text-[10px] font-black text-slate-700 tracking-widest">
+                  No Completed Matches Yet
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {viewState === 'LEADERBOARD' && (
           <div className="space-y-12 animate-in fade-in">
             <h2 className="font-orbitron text-7xl font-black uppercase italic tracking-tighter text-center pr-12">SUPREME <span className="glory-gradient">RANKINGS</span></h2>
@@ -459,21 +585,19 @@ const App: React.FC = () => {
                 <table className="w-full text-left">
                   <thead className="bg-slate-900/50">
                     <tr className="border-b border-white/5">
-                      <th className="p-10 text-[11px] font-black uppercase text-slate-500 tracking-widest">Rank</th>
-                      <th className="p-10 text-[11px] font-black uppercase text-slate-500 tracking-widest">Contender</th>
-                      <th className="p-10 text-[11px] font-black uppercase text-slate-500 tracking-widest">Sport</th>
-                      <th className="p-10 text-center text-[11px] font-black uppercase text-slate-500 tracking-widest">Total Pts</th>
+                      <th className="p-6 sm:p-10 text-[10px] sm:text-[11px] font-black uppercase text-slate-500 tracking-widest">Rank</th>
+                      <th className="p-6 sm:p-10 text-[10px] sm:text-[11px] font-black uppercase text-slate-500 tracking-widest">Contender</th>
+                      <th className="p-6 sm:p-10 text-center text-[10px] sm:text-[11px] font-black uppercase text-slate-500 tracking-widest">Trophies</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
                     {participants.sort((a, b) => b.points - a.points).map((p, i) => (
                       <tr key={`${p.sport}-${p.name}`} className="hover:bg-white/5 transition-colors group">
-                        <td className="p-10 font-black text-slate-700 text-2xl">#{i + 1}</td>
-                        <td className="p-10">
-                          <div className="font-black text-slate-100 text-2xl font-oswald uppercase tracking-tight">{p.name}</div>
+                        <td className="p-6 sm:p-10 font-black text-slate-700 text-xl sm:text-2xl">#{i + 1}</td>
+                        <td className="p-6 sm:p-10">
+                          <div className="font-black text-slate-100 text-xl sm:text-2xl font-oswald uppercase tracking-tight">{p.name}</div>
                         </td>
-                        <td className="p-10 text-slate-500 uppercase text-[11px] font-black">{p.sport}</td>
-                        <td className="p-10 text-center font-oswald text-6xl font-black text-rose-500 group-hover:scale-110 transition-transform">{p.points}</td>
+                        <td className="p-6 sm:p-10 text-center font-oswald text-4xl sm:text-6xl font-black text-rose-500 group-hover:scale-110 transition-transform">{p.points}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -495,7 +619,7 @@ const App: React.FC = () => {
       />
 
       <footer className="mt-24 border-t border-white/5 py-16 opacity-30 text-center uppercase text-[10px] font-black tracking-[0.5em]">
-        Maulana Azad College of Engineering and Technology • Fight for Glory 2026 • Powered by Webpotli
+        Maulana Azad College of Engineering and Technology • Fight for Glory 2026 • Website Developed by Al Fahad(22) and Seraj Muneer Faridy(25)
       </footer>
     </div>
   );

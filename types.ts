@@ -37,7 +37,7 @@ export interface MatchUpdates {
   status?: string;
 }
 
-export type ViewState = 'LANDING' | 'CATEGORY' | 'SPORT_DETAIL' | 'LEADERBOARD' | 'LIVE_STREAM';
+export type ViewState = 'LANDING' | 'CATEGORY' | 'SPORT_DETAIL' | 'LEADERBOARD' | 'LIVE_STREAM' | 'MATCHES';
 
 export interface AppState {
   matches: Match[];

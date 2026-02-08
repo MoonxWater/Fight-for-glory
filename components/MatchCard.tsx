@@ -75,26 +75,42 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
 
       {isAdmin && (
         <div className="mt-6 flex flex-wrap gap-2 border-t border-white/5 pt-5">
-          <div className="flex w-full gap-2">
-            <button
-              onClick={() => onUpdate(match.id, { scoreA: match.scoreA + 1, status: 'LIVE' })}
-              className="flex-1 py-3 px-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-[9px] font-black uppercase transition-colors"
-            >
-              +1 {teamA.split(' ')[0]}
-            </button>
-            <button
-              onClick={() => onUpdate(match.id, { scoreB: match.scoreB + 1, status: 'LIVE' })}
-              className="flex-1 py-3 px-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-[9px] font-black uppercase transition-colors"
-            >
-              +1 {teamB.split(' ')[0]}
-            </button>
+          <div className="flex w-full gap-2 sm:flex-col sm:gap-2">
+            <div className="flex gap-2 flex-1 sm:flex-col">
+              <button
+                onClick={() => onUpdate(match.id, { scoreA: Math.max(0, match.scoreA - 1), status: 'LIVE' })}
+                className="flex-1 sm:w-full py-2 px-2 bg-red-900/50 hover:bg-red-800/50 rounded-xl text-[8px] sm:text-[9px] font-black uppercase transition-colors"
+              >
+                -1 {teamA.split(' ')[0]}
+              </button>
+              <button
+                onClick={() => onUpdate(match.id, { scoreA: match.scoreA + 1, status: 'LIVE' })}
+                className="flex-1 sm:w-full py-2 px-2 bg-green-900/50 hover:bg-green-800/50 rounded-xl text-[8px] sm:text-[9px] font-black uppercase transition-colors"
+              >
+                +1 {teamA.split(' ')[0]}
+              </button>
+            </div>
+            <div className="flex gap-2 flex-1 sm:flex-col">
+              <button
+                onClick={() => onUpdate(match.id, { scoreB: Math.max(0, match.scoreB - 1), status: 'LIVE' })}
+                className="flex-1 sm:w-full py-2 px-2 bg-red-900/50 hover:bg-red-800/50 rounded-xl text-[8px] sm:text-[9px] font-black uppercase transition-colors"
+              >
+                -1 {teamB.split(' ')[0]}
+              </button>
+              <button
+                onClick={() => onUpdate(match.id, { scoreB: match.scoreB + 1, status: 'LIVE' })}
+                className="flex-1 sm:w-full py-2 px-2 bg-green-900/50 hover:bg-green-800/50 rounded-xl text-[8px] sm:text-[9px] font-black uppercase transition-colors"
+              >
+                +1 {teamB.split(' ')[0]}
+              </button>
+            </div>
           </div>
           <button
             onClick={() => {
               const newStatus = match.status === 'UPCOMING' ? 'LIVE' : match.status === 'LIVE' ? 'COMPLETED' : 'UPCOMING';
               onUpdate(match.id, { status: newStatus });
             }}
-            className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all text-white"
+            className="w-full py-2 px-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] transition-all text-white"
           >
             Switch State: {match.status}
           </button>
@@ -102,7 +118,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
             <button
               onClick={handleAISummary}
               disabled={loadingAI}
-              className="w-full py-3 glory-bg hover:opacity-90 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-50 text-white"
+              className="w-full py-2 px-3 glory-bg hover:opacity-90 rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-50 text-white"
             >
               {loadingAI ? 'Dreaming recap...' : 'Generate AI Glory Recap'}
             </button>

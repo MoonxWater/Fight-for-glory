@@ -33,7 +33,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
   const fetchLiveMatches = async () => {
     try {
-      const liveMatches = await api.getLiveMatches();
+      const allMatches = await api.getMatches();
+      const liveMatches = allMatches.filter(m => m.status === 'LIVE');
       // Update only live matches in the existing matches array
       setMatches(prev => {
         const nonLiveMatches = prev.filter(m => m.status !== 'LIVE');
