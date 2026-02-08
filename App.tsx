@@ -20,6 +20,8 @@ type Category = 'Boys' | 'Girls';
 
 const App: React.FC = () => {
   const [matches, setMatches] = useState<Match[]>([]);
+  const [boysGames, setBoysGames] = useState<string[]>([]);
+  const [girlsGames, setGirlsGames] = useState<string[]>([]);
   const [announcement, setAnnouncement] = useState('Welcome to Fight for Glory 2026 at MACET!');
   const [liveStreamUrl, setLiveStreamUrl] = useState('https://www.youtube.com/embed/dQw4w9WgXcQ');
 
@@ -30,16 +32,71 @@ const App: React.FC = () => {
   const [activeSport, setActiveSport] = useState<string | null>(null);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
 
-  // Poll for data
+  // Check for existing admin session on mount
   useEffect(() => {
-    fetchData();
-    const interval = setInterval(fetchData, 5000);
-    return () => clearInterval(interval);
+    const savedAdminKey = localStorage.getItem('adminKey');
+    if (savedAdminKey) {
+      setAdminKey(savedAdminKey);
+      setIsAdmin(true);
+    }
   }, []);
+
+  const handleLogin = (key: string) => {
+    setAdminKey(key);
+    localStorage.setItem('adminKey', key); // Save to localStorage
+    setIsAdmin(true);
+    setShowAdminPanel(false);
+  };
+
+  const handleLogout = () => {
+    setAdminKey('');
+    localStorage.removeItem('adminKey'); // Remove from localStorage
+    setIsAdmin(false);
+    setShowAdminPanel(false);
+  };
+
+  // Fetch games when category changes
+  useEffect(() => {
+    if (activeCategory) {
+      fetchGamesForCategory(activeCategory);
+    }
+  }, [activeCategory]);
+
+  // Initial data fetch and live match polling
+  useEffect(() => {
+    fetchData(); // Initial fetch of all data
+  }, []); // Only run once on mount
+
+  // Poll for live matches only when on relevant views
+  useEffect(() => {
+    fetchLiveMatches(); // Initial fetch
+    const interval = setInterval(fetchLiveMatches, 5000);
+    return () => clearInterval(interval);
+  }, [viewState, activeSport]); // Re-start when view or sport changes
+
+  const fetchLiveMatches = async () => {
+    // Only poll live matches on views that need real-time updates
+    if (!['SPORT_DETAIL', 'LEADERBOARD'].includes(viewState)) {
+      return;
+    }
+
+    try {
+      const liveMatches = await api.getLiveMatches();
+      // Update only live matches in existing matches array
+      setMatches(prev => {
+        const nonLiveMatches = prev.filter(m => m.status !== 'LIVE');
+        return [...nonLiveMatches, ...liveMatches];
+      });
+    } catch (err) {
+      console.error("Live matches fetch error:", err);
+    }
+  };
 
   const fetchData = async () => {
     try {
-      const allMatches = await api.getMatches();
+      const [allMatches] = await Promise.all([
+        api.getMatches()
+      ]);
       setMatches(allMatches);
       setLoading(false);
     } catch (err) {
@@ -48,16 +105,17 @@ const App: React.FC = () => {
     }
   };
 
-  const handleLogin = (key: string) => {
-    setAdminKey(key);
-    // Optimistically assume success, or we could add a verify endpoint
-    setIsAdmin(true);
-    setShowAdminPanel(false);
-  };
-
-  const handleLogout = () => {
-    setAdminKey('');
-    setIsAdmin(false);
+  const fetchGamesForCategory = async (category: Category) => {
+    try {
+      const gamesList = await api.getGamesByGender(category.toLowerCase() as 'boys' | 'girls');
+      if (category === 'Boys') {
+        setBoysGames(gamesList);
+      } else {
+        setGirlsGames(gamesList);
+      }
+    } catch (err) {
+      console.error(`Error fetching ${category} games:`, err);
+    }
   };
 
   // Derive participants (teams) from match history
@@ -154,8 +212,10 @@ const App: React.FC = () => {
   // Identify sports that have matches or are in our default list
   const availableSports = useMemo(() => {
     if (!activeCategory) return [];
-    return activeCategory === 'Boys' ? BOYS_SPORTS : GIRLS_SPORTS;
-  }, [activeCategory]);
+    const games = activeCategory === 'Boys' ? boysGames : girlsGames;
+    console.log(`${activeCategory} games:`, games);
+    return games;
+  }, [activeCategory, boysGames, girlsGames]);
 
   if (loading) return (
     <div className="min-h-screen bg-[#020617] flex items-center justify-center">
@@ -218,6 +278,12 @@ const App: React.FC = () => {
                 <div className="w-10 h-10 rounded-xl border border-white/10 bg-slate-800 flex items-center justify-center">
                   <i className="fa-solid fa-user-shield text-rose-500"></i>
                 </div>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg border border-rose-500/20"
+                >
+                  Logout
+                </button>
               </div>
             ) : (
               <button onClick={() => setShowAdminPanel(true)} className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg border border-white/5">Admin Portal</button>
