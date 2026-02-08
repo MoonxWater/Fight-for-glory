@@ -14,7 +14,7 @@ export const SPORT_ICONS: Record<SportType, string> = {
   'Volleyball': 'fa-volleyball',
   'Carrom': 'fa-square',
   'Kabaddi': 'fa-people-group',
-  'Badminton': 'fa-shuttlecock',
+  'Badminton': 'fa-medal', // Changed from shuttlecock to medal as it's free in FA6
   'Chess': 'fa-chess',
   'Race': 'fa-person-running',
   'Tug of War': 'fa-hands-holding-child',
