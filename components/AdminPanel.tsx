@@ -3,27 +3,26 @@ import React, { useState } from 'react';
 interface AdminPanelProps {
   isAdmin: boolean;
   isLoggedIn: boolean;
-  onLogin: (user: string, pass: string) => void;
+  onLogin: (key: string) => void;
   onLogout: () => void;
   onToggle: () => void;
   announcement: string;
   onUpdateAnnouncement: (val: string) => void;
 }
 
-export const AdminPanel: React.FC<AdminPanelProps> = ({ 
-  isAdmin, isLoggedIn, onLogin, onLogout, onToggle, announcement, onUpdateAnnouncement 
+export const AdminPanel: React.FC<AdminPanelProps> = ({
+  isAdmin, isLoggedIn, onLogin, onLogout, onToggle, announcement, onUpdateAnnouncement
 }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [adminKey, setAdminKey] = useState('');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    onLogin(username, password);
+    onLogin(adminKey);
   };
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      <button 
+      <button
         onClick={onToggle}
         className={`w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${isLoggedIn ? 'bg-rose-600 hover:bg-rose-500' : 'bg-slate-800 hover:bg-slate-700'}`}
       >
@@ -36,20 +35,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             <form onSubmit={handleLogin} className="space-y-4">
               <h3 className="font-orbitron text-lg font-bold mb-3 uppercase tracking-tighter glory-gradient">Admin Portal</h3>
               <div>
-                <input 
-                  type="text" 
-                  placeholder="ID / Username" 
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-4 text-sm focus:ring-2 focus:ring-rose-500 outline-none"
-                />
-              </div>
-              <div>
-                <input 
-                  type="password" 
-                  placeholder="Secret Key" 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                <input
+                  type="password"
+                  placeholder="Enter Admin Access Key"
+                  value={adminKey}
+                  onChange={(e) => setAdminKey(e.target.value)}
                   className="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-4 text-sm focus:ring-2 focus:ring-rose-500 outline-none"
                 />
               </div>
@@ -63,17 +53,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 <h3 className="font-orbitron text-sm font-bold uppercase tracking-widest text-rose-500">GLORY CONSOLE</h3>
                 <button onClick={onLogout} className="text-[9px] font-black text-slate-500 hover:text-red-500 uppercase tracking-widest">Sign Out</button>
               </div>
-              
+
               <div>
                 <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2">Global Alert Message</label>
-                <textarea 
+                <textarea
                   value={announcement}
                   onChange={(e) => onUpdateAnnouncement(e.target.value)}
                   placeholder="Ex: Cricket Finals starting now at Main Ground!"
                   className="w-full bg-slate-950/50 border border-slate-700 rounded-xl p-4 text-xs focus:outline-none focus:ring-2 focus:ring-rose-500 transition-all h-28 text-white"
                 />
               </div>
-              
+
               <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl">
                 <p className="text-[10px] text-rose-300 leading-relaxed font-bold">
                   <i className="fa-solid fa-circle-check mr-1.5"></i>
