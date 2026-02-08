@@ -1,16 +1,15 @@
 
 import { Match, MatchUpdates } from '../types';
 
-const BASE_URL = 'https://sports-amcet.onrender.com/api';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
-// This should ideally be an environment variable or user input, 
-// for now we'll use a placeholder or assume the user will provide it in the UI
-let ADMIN_KEY = 'fight-for-glory'; // This is what the API expects
+// Use environment variable for admin key
+let ADMIN_KEY = import.meta.env.VITE_ADMIN_API_KEY || '';
 
 export const setAdminKey = (key: string) => {
   console.log('Setting admin key to:', key);
-  // Always use fight-for-glory for API calls regardless of UI input
-  ADMIN_KEY = 'fight-for-glory';
+  // Always use the configured admin API key for API calls
+  ADMIN_KEY = import.meta.env.VITE_ADMIN_API_KEY || '';
 };
 
 export const getAdminKey = () => ADMIN_KEY;

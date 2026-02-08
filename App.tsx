@@ -37,22 +37,21 @@ const App: React.FC = () => {
   useEffect(() => {
     const savedAdminKey = localStorage.getItem('adminKey');
     console.log('Found saved admin key:', savedAdminKey);
-    if (savedAdminKey && savedAdminKey === 'college2026') {
-      setAdminKey('fight-for-glory'); // This will set API key to fight-for-glory
+    if (savedAdminKey && savedAdminKey === import.meta.env.VITE_ADMIN_LOGIN_KEY) {
+      setAdminKey(import.meta.env.VITE_ADMIN_API_KEY);
       setIsAdmin(true);
       console.log('Admin session restored with key:', savedAdminKey);
     } else if (savedAdminKey) {
-      // Clear invalid saved key
-      console.log('Clearing invalid admin key:', savedAdminKey);
+      console.log('Invalid admin key found, clearing...');
       localStorage.removeItem('adminKey');
     }
   }, []);
 
   const handleLogin = (key: string) => {
     // Validate the admin key before granting access
-    if (key === 'college2026') {
-      setAdminKey('fight-for-glory'); // This will set API key to fight-for-glory
-      localStorage.setItem('adminKey', key); // Save the UI key (college2026)
+    if (key === import.meta.env.VITE_ADMIN_LOGIN_KEY) {
+      setAdminKey(import.meta.env.VITE_ADMIN_API_KEY);
+      localStorage.setItem('adminKey', key); // Save the UI key
       setIsAdmin(true);
       setShowAdminPanel(false);
     } else {
