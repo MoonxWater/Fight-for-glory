@@ -33,6 +33,7 @@ const App: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [activeSport, setActiveSport] = useState<string | null>(null);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Check for existing admin session on mount
   useEffect(() => {
@@ -151,18 +152,15 @@ const App: React.FC = () => {
 
         if (m.scoreA > m.scoreB) {
           stats[m.teamA].wins++;
-          stats[m.teamA].points += 3;
           stats[m.teamB].losses++;
         } else if (m.scoreB > m.scoreA) {
           stats[m.teamB].wins++;
-          stats[m.teamB].points += 3;
           stats[m.teamA].losses++;
         } else {
           stats[m.teamA].draws++;
           stats[m.teamB].draws++;
-          stats[m.teamA].points += 1;
-          stats[m.teamB].points += 1;
         }
+        // Note: Points are no longer calculated from matches - trophies remain static
       }
     });
 
@@ -237,7 +235,7 @@ const App: React.FC = () => {
         const wicketsA = prompt("Enter Wickets for Team A:");
         const wicketsB = prompt("Enter Wickets for Team B:");
         const currentInnings = prompt("Current Innings (TeamA/TeamB):", "TeamA");
-        if (oversA && oversB && wicketsA && wicketsB && currentInnings) {
+        if (oversA !== null && oversB !== null && wicketsA !== null && wicketsB !== null && currentInnings !== null) {
           details = {
             oversA: parseFloat(oversA),
             wicketsA: parseInt(wicketsA),
@@ -252,7 +250,7 @@ const App: React.FC = () => {
         const halfTimeScoreA = prompt("Enter Half Time Score for Team A:");
         const halfTimeScoreB = prompt("Enter Half Time Score for Team B:");
         const currentPeriod = prompt("Current Period (1st Half/2nd Half/Extra):", "1st Half");
-        if (halfTimeScoreA && halfTimeScoreB && currentPeriod) {
+        if (halfTimeScoreA !== null && halfTimeScoreB !== null && currentPeriod !== null) {
           details = {
             halfTimeScoreA: parseInt(halfTimeScoreA),
             halfTimeScoreB: parseInt(halfTimeScoreB),
@@ -266,7 +264,7 @@ const App: React.FC = () => {
         const setsWonB = prompt("Enter Sets Won by Team B:");
         const currentSetScoreA = prompt("Enter Current Set Score for Team A:");
         const currentSetScoreB = prompt("Enter Current Set Score for Team B:");
-        if (setsWonA && setsWonB && currentSetScoreA && currentSetScoreB) {
+        if (setsWonA !== null && setsWonB !== null && currentSetScoreA !== null && currentSetScoreB !== null) {
           details = {
             setsWonA: parseInt(setsWonA),
             setsWonB: parseInt(setsWonB),
@@ -281,7 +279,7 @@ const App: React.FC = () => {
         const setsWonB = prompt("Enter Sets Won by Team B:");
         const currentSetScoreA = prompt("Enter Current Set Score for Team A:");
         const currentSetScoreB = prompt("Enter Current Set Score for Team B:");
-        if (setsWonA && setsWonB && currentSetScoreA && currentSetScoreB) {
+        if (setsWonA !== null && setsWonB !== null && currentSetScoreA !== null && currentSetScoreB !== null) {
           details = {
             setsWonA: parseInt(setsWonA),
             setsWonB: parseInt(setsWonB),
@@ -296,7 +294,7 @@ const App: React.FC = () => {
         const raidPointsB = prompt("Enter Raid Points for Team B:");
         const tacklePointsA = prompt("Enter Tackle Points for Team A:");
         const tacklePointsB = prompt("Enter Tackle Points for Team B:");
-        if (raidPointsA && raidPointsB && tacklePointsA && tacklePointsB) {
+        if (raidPointsA !== null && raidPointsB !== null && tacklePointsA !== null && tacklePointsB !== null) {
           details = {
             raidPointsA: parseInt(raidPointsA),
             raidPointsB: parseInt(raidPointsB),
@@ -318,7 +316,7 @@ const App: React.FC = () => {
       case 'Kho-Kho': {
         const inningsA = prompt("Enter Innings for Team A:");
         const inningsB = prompt("Enter Innings for Team B:");
-        if (inningsA && inningsB) {
+        if (inningsA !== null && inningsB !== null) {
           details = {
             inningsA: parseInt(inningsA),
             inningsB: parseInt(inningsB)
@@ -329,7 +327,7 @@ const App: React.FC = () => {
       case 'LUDO': {
         const coinsA = prompt("Enter Coins for Team A:");
         const coinsB = prompt("Enter Coins for Team B:");
-        if (coinsA && coinsB) {
+        if (coinsA !== null && coinsB !== null) {
           details = {
             coinsA: parseInt(coinsA),
             coinsB: parseInt(coinsB)
@@ -349,7 +347,7 @@ const App: React.FC = () => {
       case 'Carrom': {
         const boardsWonA = prompt("Enter Boards Won by Team A:");
         const boardsWonB = prompt("Enter Boards Won by Team B:");
-        if (boardsWonA && boardsWonB) {
+        if (boardsWonA !== null && boardsWonB !== null) {
           details = {
             boardsWonA: parseInt(boardsWonA),
             boardsWonB: parseInt(boardsWonB)
@@ -378,7 +376,7 @@ const App: React.FC = () => {
       case 'Tug of War': {
         const roundsWonA = prompt("Enter Rounds Won by Team A:");
         const roundsWonB = prompt("Enter Rounds Won by Team B:");
-        if (roundsWonA && roundsWonB) {
+        if (roundsWonA !== null && roundsWonB !== null) {
           details = {
             roundsWonA: parseInt(roundsWonA),
             roundsWonB: parseInt(roundsWonB)
@@ -389,7 +387,7 @@ const App: React.FC = () => {
       case 'Shot Put': {
         const distanceA = prompt("Enter Distance for Team A (meters):");
         const distanceB = prompt("Enter Distance for Team B (meters):");
-        if (distanceA && distanceB) {
+        if (distanceA !== null && distanceB !== null) {
           details = {
             distanceA: parseFloat(distanceA),
             distanceB: parseFloat(distanceB)
@@ -548,6 +546,14 @@ const App: React.FC = () => {
               ))}
             </nav>
 
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl glass border border-white/5 hover:bg-white/10 transition-all"
+            >
+              <i className={`fa-solid ${isMobileMenuOpen ? 'fa-times' : 'fa-bars'} text-white text-lg transition-transform ${isMobileMenuOpen ? 'rotate-90' : ''}`}></i>
+            </button>
+
             <div className="flex items-center gap-4">
               {isAdmin ? (
                 <div className="flex items-center gap-3">
@@ -572,6 +578,70 @@ const App: React.FC = () => {
           </div>
         </header>
 
+        {/* Mobile Navigation Drawer */}
+        {isMobileMenuOpen && (
+          <div className="fixed inset-0 z-50 md:hidden">
+            {/* Backdrop */}
+            <div 
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm mobile-nav-backdrop"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            
+            {/* Navigation Panel */}
+            <div className="absolute top-0 right-0 h-full w-80 bg-slate-900/95 backdrop-blur-xl border-l border-white/10 shadow-2xl mobile-nav-panel">
+              <div className="flex flex-col h-full">
+                {/* Header */}
+                <div className="flex items-center justify-between p-6 border-b border-white/10">
+                  <h3 className="font-orbitron text-lg font-bold uppercase tracking-tighter">
+                    NAVIGATION
+                  </h3>
+                  <button
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="w-10 h-10 rounded-xl glass border border-white/5 hover:bg-white/10 transition-all flex items-center justify-center"
+                  >
+                    <i className="fa-solid fa-times text-white"></i>
+                  </button>
+                </div>
+                
+                {/* Navigation Links */}
+                <nav className="flex-1 p-6 space-y-2">
+                  {['LANDING', 'LEADERBOARD', 'MATCHES', 'LIVE_STREAM'].map((v) => (
+                    <button
+                      key={v}
+                      onClick={() => { 
+                        setViewState(v as ViewState); 
+                        setActiveCategory(null); 
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`w-full text-left px-6 py-4 rounded-2xl transition-all relative ${
+                        viewState === v 
+                          ? 'bg-rose-500/20 text-rose-500 border border-rose-500/30' 
+                          : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-black uppercase tracking-[0.2em]">
+                          {v.replace('_', ' ')}
+                        </span>
+                        {viewState === v && (
+                          <i className="fa-solid fa-chevron-right text-rose-500"></i>
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </nav>
+                
+                {/* Footer */}
+                <div className="p-6 border-t border-white/10">
+                  <div className="text-center text-[10px] text-slate-600 font-black uppercase tracking-widest">
+                    FIGHT FOR GLORY 2026
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <main className="max-w-7xl mx-auto px-6 py-12">
           {/* Error Display */}
           {error && (
@@ -592,8 +662,8 @@ const App: React.FC = () => {
             <div className="space-y-20 animate-in fade-in zoom-in-95 duration-700">
               <div className="text-center max-w-5xl mx-auto space-y-8">
                 <h2 className="text-rose-500 font-orbitron font-bold tracking-[0.4em] uppercase">Maulana Azad College of Engineering and Technology</h2>
-                <h2 className="font-orbitron text-7xl md:text-9xl font-black uppercase italic tracking-tighter leading-[0.85] pr-12">
-                  FIGHT FOR <br /><span className="glory-gradient inline-block mr-6">GLORY 2026</span>
+                <h2 className="font-orbitron text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black uppercase italic tracking-tighter leading-[0.85] pr-4 sm:pr-8 lg:pr-12">
+                  FIGHT FOR <br /><span className="glory-gradient inline-block mr-2 sm:mr-4 lg:mr-6">GLORY 2026</span>
                 </h2>
                 <p className="text-slate-400 text-xl font-medium max-w-2xl mx-auto leading-relaxed">
                   The premier athletic showcase of MACET. Join us as we crown the champions of 2026 in the ultimate battle for supreme glory.
@@ -613,7 +683,7 @@ const App: React.FC = () => {
                     <img src={x.img} className="absolute inset-0 w-full h-full object-cover grayscale transition-transform duration-1000 group-hover:scale-105 group-hover:grayscale-0" alt={x.cat} />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/50 to-transparent"></div>
                     <div className="absolute bottom-16 left-16">
-                      <h3 className="font-orbitron text-6xl font-black uppercase italic text-white tracking-tighter pr-12">{x.title}</h3>
+                      <h3 className="font-orbitron text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase italic text-white tracking-tighter pr-4 sm:pr-8 lg:pr-12">{x.title}</h3>
                       <p className="text-rose-500 font-black uppercase text-xs tracking-[0.4em] mt-3">{x.cat} • Enter the Arena</p>
                     </div>
                   </div>
@@ -629,8 +699,8 @@ const App: React.FC = () => {
                   <i className="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
                   <span className="text-[11px] font-black uppercase tracking-widest">Return Home</span>
                 </button>
-                <h2 className="font-orbitron text-4xl font-black uppercase italic tracking-tighter pr-12">
-                  {activeCategory}'S <span className="text-rose-500">SPORTS</span>
+                <h2 className="font-orbitron text-2xl sm:text-3xl md:text-4xl font-black uppercase italic tracking-tighter pr-4 sm:pr-8 lg:pr-12">
+                  {activeCategory}' <span className="text-rose-500">SPORTS</span>
                 </h2>
               </div>
 
@@ -639,13 +709,13 @@ const App: React.FC = () => {
                   <div
                     key={sport}
                     onClick={() => { setActiveSport(sport); setViewState('SPORT_DETAIL'); }}
-                    className="glass p-10 rounded-[3rem] cursor-pointer hover:bg-white/10 transition-all group border border-white/5 hover:border-rose-500/50 shadow-2xl"
+                    className="glass p-6 sm:p-8 lg:p-10 rounded-[2rem] sm:rounded-[3rem] cursor-pointer hover:bg-white/10 transition-all group border border-white/5 hover:border-rose-500/50 shadow-2xl"
                   >
-                    <div className="w-20 h-20 bg-slate-800 rounded-3xl flex items-center justify-center mb-8 group-hover:glory-bg transition-all shadow-xl group-hover:scale-110">
-                      <i className={`fa-solid ${SPORT_ICONS[sport as SportType] || 'fa-medal'} text-4xl text-slate-500 group-hover:text-white`}></i>
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-slate-800 rounded-3xl flex items-center justify-center mb-6 sm:mb-8 group-hover:glory-bg transition-all shadow-xl group-hover:scale-110">
+                      <i className={`fa-solid ${SPORT_ICONS[sport as SportType] || 'fa-medal'} text-2xl sm:text-3xl lg:text-4xl text-slate-500 group-hover:text-white`}></i>
                     </div>
-                    <h3 className="font-oswald text-3xl font-black uppercase tracking-tight mb-2 text-white">{sport}</h3>
-                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">{SPORT_CONFIG[sport as SportType]?.type || 'SOLO'} FORMAT</p>
+                    <h3 className="font-oswald text-lg sm:text-xl lg:text-2xl xl:text-3xl font-black uppercase tracking-tight mb-2 text-white leading-tight">{sport}</h3>
+                    <p className="text-[9px] sm:text-[10px] font-black text-slate-600 uppercase tracking-widest">{SPORT_CONFIG[sport as SportType]?.type || 'SOLO'} FORMAT</p>
                   </div>
                 ))}
               </div>
@@ -661,11 +731,11 @@ const App: React.FC = () => {
                     <span className="text-[11px] font-black uppercase tracking-widest">All Disciplines</span>
                   </button>
                   <div className="flex items-center gap-8">
-                    <div className="w-24 h-24 glory-bg rounded-[2.5rem] flex items-center justify-center shadow-2xl">
-                      <i className={`fa-solid ${SPORT_ICONS[activeSport as SportType] || 'fa-medal'} text-5xl text-white`}></i>
+                    <div className="w-16 h-16 sm:w-20 md:w-24 sm:h-20 md:h-24 glory-bg rounded-[2rem] sm:rounded-[2.5rem] flex items-center justify-center shadow-2xl">
+                      <i className={`fa-solid ${SPORT_ICONS[activeSport as SportType] || 'fa-medal'} text-3xl sm:text-4xl md:text-5xl text-white`}></i>
                     </div>
                     <div>
-                      <h2 className="font-orbitron text-6xl font-black uppercase italic tracking-tighter leading-none pr-12">{activeSport}</h2>
+                      <h2 className="font-orbitron text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase italic tracking-tighter leading-none pr-4 sm:pr-8 lg:pr-12">{activeSport}</h2>
                       <p className="text-rose-500 text-sm font-bold uppercase tracking-widest mt-2">{activeCategory} Division • MACET</p>
                     </div>
                   </div>
@@ -683,63 +753,38 @@ const App: React.FC = () => {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                <div className="lg:col-span-4 space-y-6">
-                  <h4 className="font-oswald text-2xl font-bold uppercase tracking-widest text-slate-500">Standings</h4>
-                  <div className="glass rounded-[3rem] p-8 space-y-5 max-h-[600px] overflow-y-auto border border-white/5">
-                    {currentParticipants.length > 0 ? [...currentParticipants].sort((a, b) => b.points - a.points).map((p, i) => (
-                      <div key={p.name} className="group flex items-center justify-between p-5 bg-white/5 rounded-3xl border border-white/5 hover:bg-white/10 transition-all">
-                        <div className="flex items-center gap-4">
-                          <span className="font-black text-rose-500 text-xl font-oswald">#{i + 1}</span>
-                          <div>
-                            <div className="font-black text-slate-100 text-lg uppercase font-oswald">{p.name}</div>
-                            <div className="text-[10px] text-slate-600 uppercase tracking-widest font-black">Score: {p.points} Pts</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <div className="text-right">
-                            <div className="text-[9px] text-slate-700 font-black uppercase">W/L</div>
-                            <div className="font-oswald font-black text-rose-500 text-2xl">{p.wins}/{p.losses}</div>
-                          </div>
-                        </div>
+              <div className="space-y-6">
+                <h4 className="font-oswald text-2xl font-bold uppercase flex items-center gap-3 tracking-widest text-rose-500">
+                  <span className="w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
+                  Match Schedule
+                </h4>
+                {currentMatches.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {currentMatches.map(m => (
+                      <div key={m.id} className="relative group">
+                        <MatchCard
+                          match={m}
+                          teamA={m.teamA}
+                          teamB={m.teamB}
+                          isAdmin={isAdmin}
+                          onUpdate={updateMatch}
+                        />
+                        {isAdmin && (
+                          <button onClick={() => handleDeleteMatch(m.id)} className="absolute top-4 right-4 text-slate-500 hover:text-red-500 transition-colors p-2 glass rounded-full shadow-lg opacity-0 group-hover:opacity-100">
+                            <i className="fa-solid fa-xmark"></i>
+                          </button>
+                        )}
                       </div>
-                    )) : <div className="text-center py-20 opacity-20 uppercase text-[10px] font-black tracking-widest">No matches played yet</div>}
+                    ))}
                   </div>
-                </div>
-
-                <div className="lg:col-span-8 space-y-6">
-                  <h4 className="font-oswald text-2xl font-bold uppercase flex items-center gap-3 tracking-widest text-rose-500">
-                    <span className="w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
-                    Match Schedule
-                  </h4>
-                  {currentMatches.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      {currentMatches.map(m => (
-                        <div key={m.id} className="relative group">
-                          <MatchCard
-                            match={m}
-                            teamA={m.teamA}
-                            teamB={m.teamB}
-                            isAdmin={isAdmin}
-                            onUpdate={updateMatch}
-                          />
-                          {isAdmin && (
-                            <button onClick={() => handleDeleteMatch(m.id)} className="absolute top-4 right-4 text-slate-500 hover:text-red-500 transition-colors p-2 glass rounded-full shadow-lg opacity-0 group-hover:opacity-100">
-                              <i className="fa-solid fa-xmark"></i>
-                            </button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  ) : <div className="py-40 text-center glass rounded-[3.5rem] border-2 border-dashed border-slate-800 uppercase text-[10px] font-black text-slate-700 tracking-widest">No matches scheduled</div>}
-                </div>
+                ) : <div className="py-40 text-center glass rounded-[3.5rem] border-2 border-dashed border-slate-800 uppercase text-[10px] font-black text-slate-700 tracking-widest">No matches scheduled</div>}
               </div>
             </div>
           )}
 
           {viewState === 'LIVE_STREAM' && (
             <div className="max-w-6xl mx-auto space-y-12 animate-in zoom-in-95">
-              <h2 className="font-orbitron text-7xl font-black uppercase italic tracking-tighter text-center pr-12">GLORY <span className="glory-gradient">STREAM</span></h2>
+              <h2 className="font-orbitron text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black uppercase italic tracking-tighter text-center pr-4 sm:pr-8 lg:pr-12">GLORY <span className="glory-gradient">STREAM</span></h2>
               <div className="relative pt-[56.25%] rounded-[4rem] overflow-hidden shadow-[0_0_120px_rgba(225,29,72,0.2)] ring-1 ring-white/10">
                 <iframe className="absolute top-0 left-0 w-full h-full" src={liveStreamUrl} frameBorder="0" allowFullScreen title="Live Stream"></iframe>
               </div>
@@ -748,13 +793,13 @@ const App: React.FC = () => {
 
           {viewState === 'MATCHES' && (
             <div className="space-y-12 animate-in fade-in">
-              <h2 className="font-orbitron text-7xl font-black uppercase italic tracking-tighter text-center pr-12">BATTLE <span className="glory-gradient">ARENA</span></h2>
+              <h2 className="font-orbitron text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black uppercase italic tracking-tighter text-center pr-4 sm:pr-8 lg:pr-12">BATTLE <span className="glory-gradient">ARENA</span></h2>
 
               {/* Live Matches */}
               <div className="space-y-6">
                 <h3 className="font-oswald text-3xl font-bold uppercase flex items-center gap-3 tracking-widest text-rose-500">
                   <span className="w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
-                  Live Matches
+                  Live Battles
                 </h3>
                 {matches.filter(m => m.status === 'LIVE').length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -850,8 +895,18 @@ const App: React.FC = () => {
 
           {viewState === 'LEADERBOARD' && (
             <div className="space-y-12 animate-in fade-in">
-              <h2 className="font-orbitron text-7xl font-black uppercase italic tracking-tighter text-center pr-12">SUPREME <span className="glory-gradient">RANKINGS</span></h2>
-              <div className="glass rounded-[4rem] overflow-hidden border border-white/5 shadow-2xl">
+              <h2 className="font-orbitron text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black uppercase italic tracking-tighter text-center pr-4 sm:pr-8 lg:pr-12">SUPREME <span className="glory-gradient">RANKINGS</span></h2>
+              
+              {/* Under Construction Notice */}
+              <div className="mb-8 p-6 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-center">
+                <div className="flex items-center justify-center gap-3 mb-2">
+                  <i className="fa-solid fa-hammer text-amber-400 text-2xl animate-pulse"></i>
+                  <h3 className="font-oswald text-xl font-bold uppercase tracking-wider text-amber-400">Under Construction</h3>
+                </div>
+                <p className="text-amber-200 text-sm font-medium">Leaderboard is currently disabled. Rankings will be available soon.</p>
+              </div>
+              
+              {/* <div className="glass rounded-[4rem] overflow-hidden border border-white/5 shadow-2xl opacity-50">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
                     <thead className="bg-slate-900/50">
@@ -862,19 +917,19 @@ const App: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                      {participants.sort((a, b) => b.points - a.points).map((p, i) => (
+                      {participants.sort((a, b) => b.wins - a.wins).map((p, i) => (
                         <tr key={`${p.sport}-${p.name}`} className="hover:bg-white/5 transition-colors group">
                           <td className="p-6 sm:p-10 font-black text-slate-700 text-xl sm:text-2xl">#{i + 1}</td>
                           <td className="p-6 sm:p-10">
                             <div className="font-black text-slate-100 text-xl sm:text-2xl font-oswald uppercase tracking-tight">{p.name}</div>
                           </td>
-                          <td className="p-6 sm:p-10 text-center font-oswald text-4xl sm:text-6xl font-black text-rose-500 group-hover:scale-110 transition-transform">{p.points}</td>
+                          <td className="p-6 sm:p-10 text-center font-oswald text-4xl sm:text-6xl font-black text-rose-500 group-hover:scale-110 transition-transform">{p.wins}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
-              </div>
+              </div> */}
             </div>
           )}
         </main>

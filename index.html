@@ -43,10 +43,40 @@
         .glory-gradient {
             background: linear-gradient(135deg, #e11d48 0%, #fbbf24 100%);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .glory-bg {
             background: linear-gradient(135deg, #e11d48 0%, #fbbf24 100%);
+        }
+
+        /* Mobile Navigation Animations */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .mobile-nav-panel {
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .mobile-nav-backdrop {
+            animation: fadeIn 0.2s ease-out;
         }
     </style>
 <script type="importmap">

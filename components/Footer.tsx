@@ -93,8 +93,10 @@ const Footer: React.FC<FooterProps> = ({ onViewChange, onCategoryChange }) => {
             <h4 className="font-oswald text-lg font-bold uppercase tracking-widest text-white">Connect</h4>
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-slate-400 text-sm">
+                <a href="https://macet.ac.in/" target="_blank" rel="noopener noreferrer" aria-label="MACET - Patna">
                 <i className="fa-solid fa-location-dot w-4 text-rose-500"></i>
                 <span>MACET - Patna </span>
+                </a>
               </div>
 
               <div className="space-y-2 pt-2">
