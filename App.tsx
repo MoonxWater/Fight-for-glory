@@ -204,7 +204,56 @@ const App: React.FC = () => {
     if (!teamA) return;
     const teamB = prompt("Enter Team B Name:");
     if (!teamB) return;
-    const venue = prompt("Enter Venue (optional):") || undefined;
+
+    // Venue is mandatory for some sports, so let's make it required or default it
+    const venue = prompt("Enter Venue (Required):", "Main Ground");
+    if (!venue) return;
+
+    let details: any = {};
+    const defaultZero = 0;
+
+    switch (activeSport) {
+      case 'Cricket': {
+        const overs = prompt("Enter Overs (Required):", "10");
+        if (!overs) return;
+        details.overs = parseInt(overs);
+        details.wicketsA = 0; // Initialize
+        details.wicketsB = 0;
+        break;
+      }
+      case 'Football': {
+        details.halfTimeScoreA = 0;
+        details.halfTimeScoreB = 0;
+        break;
+      }
+      case 'Volleyball': {
+        details.setsWonA = 0;
+        details.setsWonB = 0;
+        break;
+      }
+      case 'Kabaddi': {
+        details.pointsA = 0;
+        details.pointsB = 0;
+        break;
+      }
+      case 'Musical Chair': {
+        details.roundsCompleted = 0;
+        break;
+      }
+      case 'Race': {
+        const distance = prompt("Enter Race Distance (meters):", "100");
+        if (!distance) return;
+        details.distance = parseFloat(distance);
+        break;
+      }
+      case 'Needle & Thread': {
+        details.completed = false;
+        break;
+      }
+      // Add other cases as needed or default to empty
+      default:
+        break;
+    }
 
     try {
       await api.createMatch({
@@ -215,23 +264,66 @@ const App: React.FC = () => {
         scoreB: 0,
         status: 'UPCOMING',
         gender: activeCategory?.toLowerCase() || 'boys',
-        venue: venue
+        venue: venue,
+        details: details
       });
-      fetchData();
+      await fetchData();
+      if (activeCategory) {
+        // Refresh games list too in case this was a new sport (though user selected valid sport)
+        fetchGamesForCategory(activeCategory);
+      }
+      alert("Match scheduled successfully!");
     } catch (err: any) {
       alert("Scheduling failed: " + err.message);
     }
   };
 
-  const currentMatches = useMemo(() =>
-    matches.filter(m => m.sport === activeSport),
-    [matches, activeSport]
-  );
+  const currentMatches = useMemo(() => {
+    return matches.filter(m => {
+      const matchGender = m.gender?.toLowerCase() || 'boys'; // Default to boys if undefined for now
+      const currentCategory = activeCategory?.toLowerCase();
+      return m.sport === activeSport && (!currentCategory || matchGender === currentCategory);
+    });
+  }, [matches, activeSport, activeCategory]);
 
-  const currentParticipants = useMemo(() =>
-    participants.filter(p => p.sport === activeSport),
-    [participants, activeSport]
-  );
+  const currentParticipants = useMemo(() => {
+    const stats: Record<string, TeamStats> = {};
+
+    currentMatches.forEach(m => {
+      // Initialize if not exists
+      if (!stats[m.teamA]) {
+        stats[m.teamA] = { name: m.teamA, matchesPlayed: 0, wins: 0, losses: 0, draws: 0, points: 0, sport: m.sport };
+      }
+      if (!stats[m.teamB]) {
+        stats[m.teamB] = { name: m.teamB, matchesPlayed: 0, wins: 0, losses: 0, draws: 0, points: 0, sport: m.sport };
+      }
+
+      // Only count stats for COMPLETED matches (and LIVE if desired, but usually only completed count for points)
+      // The previous logic counted LIVE for points too?
+      // User's previous logic: if (m.status === 'COMPLETED' || m.status === 'LIVE')
+      if (m.status === 'COMPLETED' || m.status === 'LIVE') {
+        stats[m.teamA].matchesPlayed++;
+        stats[m.teamB].matchesPlayed++;
+
+        if (m.scoreA > m.scoreB) {
+          stats[m.teamA].wins++;
+          stats[m.teamA].points += 3;
+          stats[m.teamB].losses++;
+        } else if (m.scoreB > m.scoreA) {
+          stats[m.teamB].wins++;
+          stats[m.teamB].points += 3;
+          stats[m.teamA].losses++;
+        } else {
+          stats[m.teamA].draws++;
+          stats[m.teamB].draws++;
+          stats[m.teamA].points += 1;
+          stats[m.teamB].points += 1;
+        }
+      }
+    });
+
+    return Object.values(stats);
+  }, [currentMatches]);
 
   // Identify sports that have matches or are in our default list
   const availableSports = useMemo(() => {
@@ -619,7 +711,7 @@ const App: React.FC = () => {
       />
 
       <footer className="mt-24 border-t border-white/5 py-16 opacity-30 text-center uppercase text-[10px] font-black tracking-[0.5em]">
-        Maulana Azad College of Engineering and Technology • Fight for Glory 2026 • Website Developed by Al Fahad(22) and Seraj Muneer Faridy(25)
+        Maulana Azad College of Engineering and Technology • Fight for Glory 2026 • Website Developed by MD Al Fahad Ahmed (2k22) and Seraj Muneer Faridy (2k25)
       </footer>
     </div>
   );

@@ -1,7 +1,7 @@
 export type SportType =
   | 'Cricket' | 'Volleyball' | 'Carrom' | 'Kabaddi' | 'Football'
   | 'Badminton' | 'Chess' | 'Race' | 'Tug of War' | 'Ludo'
-  | 'Musical Chair' | 'Kho-Kho';
+  | 'Musical Chair' | 'Kho-Kho' | 'Needle & Thread';
 
 export interface Participant {
   name: string;
@@ -25,10 +25,40 @@ export interface Match {
   status: MatchStatus;
   createdAt?: string;
   updatedAt?: string;
-  // These are not in the new API but were in the old types. 
-  // We might need to infer them or remove them.
-  category?: string;
+  gender?: 'boys' | 'girls';
+  venue?: string;
+  category?: string; // Kept for backward compatibility if needed
   startTime?: string;
+  details?: {
+    // Cricket
+    overs?: number;
+    wickets?: number; // Format: 0
+    wicketsA?: number; // Helper for UI, might not be in API
+    wicketsB?: number;
+
+    // Football
+    halfTimeScoreA?: number;
+    halfTimeScoreB?: number;
+
+    // Volleyball
+    setsWonA?: number;
+    setsWonB?: number;
+
+    // Kabaddi
+    pointsA?: number;
+    pointsB?: number;
+
+    // Musical Chair
+    roundsCompleted?: number;
+
+    // Race
+    distance?: number;
+
+    // Needle & Thread
+    completed?: boolean;
+
+    [key: string]: any;
+  } | {};
 }
 
 export interface MatchUpdates {

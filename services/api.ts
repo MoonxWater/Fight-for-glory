@@ -18,6 +18,9 @@ export const getAdminKey = () => ADMIN_KEY;
 const getHeaders = (isAdmin = false) => {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
   };
   if (isAdmin && ADMIN_KEY) {
     headers['X-MACET-ADMIN'] = ADMIN_KEY;
@@ -85,7 +88,9 @@ export const api = {
   getMatches: async (): Promise<Match[]> => {
     try {
       console.log('Fetching matches from API...');
-      const res = await fetch(`${BASE_URL}/matches`);
+      const res = await fetch(`${BASE_URL}/matches?t=${Date.now()}`, {
+        headers: getHeaders(false)
+      });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       console.log('Fetched matches:', data);
@@ -112,10 +117,13 @@ export const api = {
     console.log('Creating match with admin key:', ADMIN_KEY ? 'SET' : 'NOT SET');
     console.log('Match data:', matchData);
 
+    // Remove scores and status from payload as they are not allowed in creation
+    const { scoreA, scoreB, status, ...payload } = matchData;
+
     const res = await fetch(`${BASE_URL}/matches`, {
       method: 'POST',
       headers: getHeaders(true),
-      body: JSON.stringify(matchData),
+      body: JSON.stringify(payload),
     });
 
     console.log('Response status:', res.status);
