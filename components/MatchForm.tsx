@@ -17,7 +17,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
     scoreB: match?.scoreB || 0,
     status: match?.status || 'UPCOMING' as const,
     gender: match?.gender || 'boys',
-    venue: match?.venue || 'Main Ground',
+    venue: match?.venue || 'Playground-1',
     details: (() => {
       const d = match?.details || {} as any;
       // If we have a formatted wickets string, parse it for the UI
@@ -361,7 +361,6 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   onChange={handleDetailsChange}
                   step="0.1"
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                  required
                 />
               </div>
               <div>
@@ -388,7 +387,6 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   onChange={handleDetailsChange}
                   step="0.1"
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                  required
                 />
               </div>
               <div>
@@ -413,7 +411,6 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   value={formData.details.currentInnings || 'None'}
                   onChange={handleDetailsChange}
                   className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                  required
                 >
                   <option value="">Select Innings</option>
                   <option value="None">None</option>
@@ -447,7 +444,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="halfTimeScoreB"
-                  value={formData.details.halfTimeScoreB || ''}
+                  value={formData.details.halfTimeScoreB || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -459,7 +456,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 </label>
                 <select
                   name="currentPeriod"
-                  value={formData.details.currentPeriod || ''}
+                  value={formData.details.currentPeriod || '1st Half'}
                   onChange={handleDetailsChange}
                   className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -483,7 +480,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="setsWonA"
-                  value={formData.details.setsWonA || ''}
+                  value={formData.details.setsWonA || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -496,7 +493,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="setsWonB"
-                  value={formData.details.setsWonB || ''}
+                  value={formData.details.setsWonB || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -509,7 +506,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="currentSetScoreA"
-                  value={formData.details.currentSetScoreA || ''}
+                  value={formData.details.currentSetScoreA || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -522,7 +519,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="currentSetScoreB"
-                  value={formData.details.currentSetScoreB || ''}
+                  value={formData.details.currentSetScoreB || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -541,7 +538,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="setsWonA"
-                  value={formData.details.setsWonA || ''}
+                  value={formData.details.setsWonA || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -554,7 +551,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="setsWonB"
-                  value={formData.details.setsWonB || ''}
+                  value={formData.details.setsWonB || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -567,7 +564,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="currentSetScoreA"
-                  value={formData.details.currentSetScoreA || ''}
+                  value={formData.details.currentSetScoreA || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -580,7 +577,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="currentSetScoreB"
-                  value={formData.details.currentSetScoreB || ''}
+                  value={formData.details.currentSetScoreB || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -599,7 +596,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="raidPointsA"
-                  value={formData.details.raidPointsA || ''}
+                  value={formData.details.raidPointsA || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -612,7 +609,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="raidPointsB"
-                  value={formData.details.raidPointsB || ''}
+                  value={formData.details.raidPointsB || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -625,7 +622,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="tacklePointsA"
-                  value={formData.details.tacklePointsA || ''}
+                  value={formData.details.tacklePointsA || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -638,7 +635,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="tacklePointsB"
-                  value={formData.details.tacklePointsB || ''}
+                  value={formData.details.tacklePointsB || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -656,7 +653,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
               <input
                 type="number"
                 name="roundsCompleted"
-                value={formData.details.roundsCompleted || ''}
+                value={formData.details.roundsCompleted || 0}
                 onChange={handleDetailsChange}
                                 className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 required
@@ -674,7 +671,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="inningsA"
-                  value={formData.details.inningsA || ''}
+                  value={formData.details.inningsA || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -687,7 +684,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="inningsB"
-                  value={formData.details.inningsB || ''}
+                  value={formData.details.inningsB || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -706,7 +703,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="coinsA"
-                  value={formData.details.coinsA || ''}
+                  value={formData.details.coinsA || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -719,7 +716,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="coinsB"
-                  value={formData.details.coinsB || ''}
+                  value={formData.details.coinsB || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -737,7 +734,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
               <input
                 type="number"
                 name="movesPlayed"
-                value={formData.details.movesPlayed || ''}
+                value={formData.details.movesPlayed || 0}
                 onChange={handleDetailsChange}
                                 className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 required
@@ -755,7 +752,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="boardsWonA"
-                  value={formData.details.boardsWonA || ''}
+                  value={formData.details.boardsWonA || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -768,7 +765,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="boardsWonB"
-                  value={formData.details.boardsWonB || ''}
+                  value={formData.details.boardsWonB || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -786,7 +783,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
               <input
                 type="number"
                 name="distance"
-                value={formData.details.distance || ''}
+                value={formData.details.distance || 100}
                 onChange={handleDetailsChange}
                 step="0.1"
                                 className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
@@ -804,7 +801,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
               <input
                 type="number"
                 name="jumps"
-                value={formData.details.jumps || ''}
+                value={formData.details.jumps || 0}
                 onChange={handleDetailsChange}
                                 className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 required
@@ -822,7 +819,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="roundsWonA"
-                  value={formData.details.roundsWonA || ''}
+                  value={formData.details.roundsWonA || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -835,7 +832,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="roundsWonB"
-                  value={formData.details.roundsWonB || ''}
+                  value={formData.details.roundsWonB || 0}
                   onChange={handleDetailsChange}
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
@@ -854,7 +851,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="distanceA"
-                  value={formData.details.distanceA || ''}
+                  value={formData.details.distanceA || 0}
                   onChange={handleDetailsChange}
                   step="0.1"
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
@@ -868,7 +865,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 <input
                   type="number"
                   name="distanceB"
-                  value={formData.details.distanceB || ''}
+                  value={formData.details.distanceB || 0}
                   onChange={handleDetailsChange}
                   step="0.1"
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
@@ -906,7 +903,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
               <input
                 type="number"
                 name="roundsCompleted"
-                value={formData.details.roundsCompleted || ''}
+                value={formData.details.roundsCompleted || 0}
                 onChange={handleDetailsChange}
                                 className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 required
