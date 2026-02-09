@@ -5,6 +5,7 @@ import { MatchCard } from './components/MatchCard';
 import { AdminPanel } from './components/AdminPanel';
 import { Footer } from './components/Footer';
 import { api, setAdminKey } from './services/api';
+import { Analytics } from '@vercel/analytics/react';
 
 // Derived types for local UI state
 interface TeamStats {
@@ -955,6 +956,7 @@ const App: React.FC = () => {
           setViewState('CATEGORY');
         }}
       />
+      <Analytics />
     </div>
   );
 };
