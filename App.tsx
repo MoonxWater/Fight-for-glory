@@ -6,6 +6,7 @@ import { AdminPanel } from './components/AdminPanel';
 import { Footer } from './components/Footer';
 import { api, setAdminKey } from './services/api';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 // Derived types for local UI state
 interface TeamStats {
@@ -957,6 +958,7 @@ const App: React.FC = () => {
         }}
       />
       <Analytics />
+      <SpeedInsights />
     </div>
   );
 };
