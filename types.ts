@@ -57,6 +57,9 @@ export interface Match {
     // Needle & Thread
     completed?: boolean;
 
+    // Winner declaration
+    winner?: string; // Team name of the winner
+
     [key: string]: any;
   } | {};
 }
@@ -65,6 +68,10 @@ export interface MatchUpdates {
   scoreA?: number;
   scoreB?: number;
   status?: string;
+  details?: {
+    winner?: string;
+    [key: string]: any;
+  };
 }
 
 export type ViewState = 'LANDING' | 'CATEGORY' | 'SPORT_DETAIL' | 'LEADERBOARD' | 'LIVE_STREAM' | 'MATCHES';

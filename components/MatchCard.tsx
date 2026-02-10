@@ -263,6 +263,16 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
         </div>
       )}
 
+      {/* Venue */}
+      {match.venue && (
+        <div className="mb-4">
+          <div className="flex items-center gap-2 text-[10px] text-slate-500 font-medium uppercase tracking-wider">
+            <i className="fa-solid fa-location-dot"></i>
+            {match.venue}
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between gap-4 mb-8">
         <div className="flex flex-col items-center text-center flex-1">
           <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center font-black text-xl text-slate-400 mb-3 border border-white/5">
@@ -288,6 +298,19 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
 
       {/* Sport-Specific Details */}
       {renderSportDetails()}
+
+      {/* Winner Display for Completed Matches */}
+      {match.status === 'COMPLETED' && match.details?.winner && (
+        <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 to-rose-500/10 border border-amber-500/30 text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <i className="fa-solid fa-trophy text-amber-400 text-lg"></i>
+            <span className="text-[10px] font-black uppercase tracking-wider text-amber-400">Winner</span>
+          </div>
+          <div className="font-oswald text-xl font-bold text-white uppercase tracking-tight">
+            {match.details.winner}
+          </div>
+        </div>
+      )}
 
       {match.summary && (
         <div className="mt-4 p-4 rounded-2xl bg-rose-500/5 border border-rose-500/10 text-[11px] italic text-slate-300 leading-relaxed text-center">
@@ -328,6 +351,31 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
               </button>
             </div>
           </div>
+          
+          {/* Winner Declaration for Live Matches */}
+          {match.status === 'LIVE' && (
+            <div className="w-full">
+              <div className="flex gap-2">
+                <select
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      onUpdate(match.id, { 
+                        status: 'COMPLETED',
+                        details: { winner: e.target.value }
+                      });
+                    }
+                  }}
+                  className="flex-1 py-2 px-3 bg-slate-700 border border-slate-600 rounded-xl text-[10px] font-medium text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  defaultValue=""
+                >
+                  <option value="" disabled>Declare Winner</option>
+                  <option value={teamA}>{teamA}</option>
+                  <option value={teamB}>{teamB}</option>
+                </select>
+              </div>
+            </div>
+          )}
+          
           <button
             onClick={() => {
               const newStatus = match.status === 'UPCOMING' ? 'LIVE' : match.status === 'LIVE' ? 'COMPLETED' : 'UPCOMING';

@@ -120,6 +120,8 @@ const App: React.FC = () => {
     } catch (err) {
       console.error("Fetch error:", err);
       setLoading(false);
+      // Set empty matches to allow UI to load
+      setMatches([]);
     }
   };
 

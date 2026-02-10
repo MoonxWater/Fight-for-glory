@@ -40,14 +40,38 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
           defaultDetails.scoreB = 0;
           defaultDetails.wicketsA = 0;
           defaultDetails.wicketsB = 0;
+          defaultDetails.winner = 'None';
           break;
-        case 'Football': defaultDetails.halfTimeScoreA = 0; defaultDetails.halfTimeScoreB = 0; break;
-        case 'Volleyball': defaultDetails.setsWonA = 0; defaultDetails.setsWonB = 0; break;
-        case 'Kabaddi': defaultDetails.pointsA = 0; defaultDetails.pointsB = 0; break;
-        case 'Race': defaultDetails.distance = 100; break;
-        case 'Musical Chair': defaultDetails.roundsCompleted = 0; break;
-        case 'Needle & Thread': defaultDetails.completed = false; break;
-        default: break;
+        case 'Football': 
+          defaultDetails.halfTimeScoreA = 0; 
+          defaultDetails.halfTimeScoreB = 0; 
+          defaultDetails.winner = 'None';
+          break;
+        case 'Volleyball': 
+          defaultDetails.setsWonA = 0; 
+          defaultDetails.setsWonB = 0; 
+          defaultDetails.winner = 'None';
+          break;
+        case 'Kabaddi': 
+          defaultDetails.pointsA = 0; 
+          defaultDetails.pointsB = 0; 
+          defaultDetails.winner = 'None';
+          break;
+        case 'Race': 
+          defaultDetails.distance = 100; 
+          defaultDetails.winner = 'None';
+          break;
+        case 'Musical Chair': 
+          defaultDetails.roundsCompleted = 0; 
+          defaultDetails.winner = 'None';
+          break;
+        case 'Needle & Thread': 
+          defaultDetails.completed = false; 
+          defaultDetails.winner = 'None';
+          break;
+        default: 
+          defaultDetails.winner = 'None';
+          break;
       }
       setFormData(prev => ({ ...prev, details: defaultDetails }));
     }
@@ -100,83 +124,99 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
           wicketsA: Number(d.wicketsA) || 0,
           oversB: Number(d.oversB) || 0,
           wicketsB: Number(d.wicketsB) || 0,
-          currentInnings: d.currentInnings || 'None'
+          currentInnings: d.currentInnings || 'None',
+          winner: d.winner || 'None'
         };
       } else if (finalData.sport === 'Football') {
         finalData.details = {
           halfTimeScoreA: Math.floor(Number(d.halfTimeScoreA) || 0),
           halfTimeScoreB: Math.floor(Number(d.halfTimeScoreB) || 0),
-          currentPeriod: d.currentPeriod || '1st Half'
+          currentPeriod: d.currentPeriod || '1st Half',
+          winner: d.winner || 'None'
         };
       } else if (finalData.sport === 'Volleyball') {
         finalData.details = {
           setsWonA: Math.floor(Number(d.setsWonA) || 0),
           setsWonB: Math.floor(Number(d.setsWonB) || 0),
           currentSetScoreA: Math.floor(Number(d.currentSetScoreA) || 0),
-          currentSetScoreB: Math.floor(Number(d.currentSetScoreB) || 0)
+          currentSetScoreB: Math.floor(Number(d.currentSetScoreB) || 0),
+          winner: d.winner || 'None'
         };
       } else if (finalData.sport === 'Badminton') {
         finalData.details = {
           setsWonA: Math.floor(Number(d.setsWonA) || 0),
           setsWonB: Math.floor(Number(d.setsWonB) || 0),
           currentSetScoreA: Math.floor(Number(d.currentSetScoreA) || 0),
-          currentSetScoreB: Math.floor(Number(d.currentSetScoreB) || 0)
+          currentSetScoreB: Math.floor(Number(d.currentSetScoreB) || 0),
+          winner: d.winner || 'None'
         };
       } else if (finalData.sport === 'Kabaddi') {
         finalData.details = {
           raidPointsA: Math.floor(Number(d.raidPointsA) || 0),
           raidPointsB: Math.floor(Number(d.raidPointsB) || 0),
           tacklePointsA: Math.floor(Number(d.tacklePointsA) || 0),
-          tacklePointsB: Math.floor(Number(d.tacklePointsB) || 0)
+          tacklePointsB: Math.floor(Number(d.tacklePointsB) || 0),
+          winner: d.winner || 'None'
         };
       } else if (finalData.sport === 'Musical Chair') {
         finalData.details = {
           roundsCompleted: Math.floor(Number(d.roundsCompleted) || 0),
+          winner: d.winner || 'None'
         };
       } else if (finalData.sport === 'Kho-Kho') {
         finalData.details = {
           inningsA: Math.floor(Number(d.inningsA) || 0),
-          inningsB: Math.floor(Number(d.inningsB) || 0)
+          inningsB: Math.floor(Number(d.inningsB) || 0),
+          winner: d.winner || 'None'
         };
       } else if (finalData.sport === 'LUDO') {
         finalData.details = {
           coinsA: Math.floor(Number(d.coinsA) || 0),
-          coinsB: Math.floor(Number(d.coinsB) || 0)
+          coinsB: Math.floor(Number(d.coinsB) || 0),
+          winner: d.winner || 'None'
         };
       } else if (finalData.sport === 'Chess') {
         finalData.details = {
-          movesPlayed: Math.floor(Number(d.movesPlayed) || 0)
+          movesPlayed: Math.floor(Number(d.movesPlayed) || 0),
+          winner: d.winner || 'None'
         };
       } else if (finalData.sport === 'Carrom') {
         finalData.details = {
           boardsWonA: Math.floor(Number(d.boardsWonA) || 0),
-          boardsWonB: Math.floor(Number(d.boardsWonB) || 0)
+          boardsWonB: Math.floor(Number(d.boardsWonB) || 0),
+          winner: d.winner || 'None'
         };
       } else if (finalData.sport === 'Race') {
         finalData.details = {
           distance: Number(d.distance) || 100,
+          winner: d.winner || 'None'
         };
       } else if (finalData.sport === 'Skipping') {
         finalData.details = {
-          jumps: Math.floor(Number(d.jumps) || 0)
+          jumps: Math.floor(Number(d.jumps) || 0),
+          winner: d.winner || 'None'
         };
       } else if (finalData.sport === 'Tug of War') {
         finalData.details = {
           roundsWonA: Math.floor(Number(d.roundsWonA) || 0),
-          roundsWonB: Math.floor(Number(d.roundsWonB) || 0)
+          roundsWonB: Math.floor(Number(d.roundsWonB) || 0),
+          winner: d.winner || 'None'
         };
       } else if (finalData.sport === 'Shot Put') {
         finalData.details = {
           distanceA: Number(d.distanceA) || 0,
-          distanceB: Number(d.distanceB) || 0
+          distanceB: Number(d.distanceB) || 0,
+          winner: d.winner || 'None'
         };
       } else if (finalData.sport === 'Needle & Thread') {
         finalData.details = {
           completed: Boolean(d.completed),
+          winner: d.winner || 'None'
         };
       } else if (finalData.sport === 'Spoon Race') {
         finalData.details = {
           roundsCompleted: Math.floor(Number(d.roundsCompleted) || 0),
+          winner: d.winner || 'None'
         };
       }
 
