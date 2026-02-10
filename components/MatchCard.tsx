@@ -58,7 +58,9 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
             {details.currentInnings && (
               <div className="flex justify-between items-center p-2 bg-rose-500/10 rounded-lg border border-rose-500/20">
                 <span className="font-black uppercase tracking-wider text-rose-400">Current Innings</span>
-                <span className="font-mono text-rose-400">{details.currentInnings}</span>
+                <span className="font-mono text-rose-400">
+                  {details.currentInnings === 'TeamA' ? teamA : details.currentInnings === 'TeamB' ? teamB : details.currentInnings}
+                </span>
               </div>
             )}
           </div>
@@ -275,10 +277,27 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
 
       <div className="flex items-center justify-between gap-4 mb-8">
         <div className="flex flex-col items-center text-center flex-1">
-          <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center font-black text-xl text-slate-400 mb-3 border border-white/5">
+          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl mb-3 border border-white/5 relative ${
+            match.status === 'COMPLETED' && match.details?.winner === teamA 
+              ? 'bg-gradient-to-br from-amber-500 to-amber-600 border-amber-400' 
+              : match.status === 'COMPLETED' && match.details?.winner === teamB
+              ? 'bg-slate-700 border-slate-600' 
+              : 'bg-slate-800 border-white/5'
+          }`}>
             {teamA.charAt(0)}
+            {match.status === 'COMPLETED' && match.details?.winner === teamA && (
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <i className="fa-solid fa-crown text-amber-400 text-lg"></i>
+              </div>
+            )}
           </div>
-          <h3 className="font-oswald text-lg font-bold uppercase tracking-tight line-clamp-1 text-white">{teamA}</h3>
+          <h3 className={`font-oswald text-lg font-bold uppercase tracking-tight line-clamp-1 ${
+            match.status === 'COMPLETED' && match.details?.winner === teamA 
+              ? 'text-amber-400' 
+              : match.status === 'COMPLETED' && match.details?.winner === teamB
+              ? 'text-slate-500' 
+              : 'text-white'
+          }`}>{teamA}</h3>
         </div>
 
         <div className="flex flex-col items-center flex-shrink-0">
@@ -289,10 +308,27 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
         </div>
 
         <div className="flex flex-col items-center text-center flex-1">
-          <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center font-black text-xl text-slate-400 mb-3 border border-white/5">
+          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl mb-3 border border-white/5 relative ${
+            match.status === 'COMPLETED' && match.details?.winner === teamB 
+              ? 'bg-gradient-to-br from-amber-500 to-amber-600 border-amber-400' 
+              : match.status === 'COMPLETED' && match.details?.winner === teamA
+              ? 'bg-slate-700 border-slate-600' 
+              : 'bg-slate-800 border-white/5'
+          }`}>
             {teamB.charAt(0)}
+            {match.status === 'COMPLETED' && match.details?.winner === teamB && (
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <i className="fa-solid fa-crown text-amber-400 text-lg"></i>
+              </div>
+            )}
           </div>
-          <h3 className="font-oswald text-lg font-bold uppercase tracking-tight line-clamp-1 text-white">{teamB}</h3>
+          <h3 className={`font-oswald text-lg font-bold uppercase tracking-tight line-clamp-1 ${
+            match.status === 'COMPLETED' && match.details?.winner === teamB 
+              ? 'text-amber-400' 
+              : match.status === 'COMPLETED' && match.details?.winner === teamA
+              ? 'text-slate-500' 
+              : 'text-white'
+          }`}>{teamB}</h3>
         </div>
       </div>
 
@@ -385,15 +421,6 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
           >
             Switch State: {match.status}
           </button>
-          {match.status === 'COMPLETED' && !(match as any).summary && (
-            <button
-              onClick={handleAISummary}
-              disabled={loadingAI}
-              className="w-full py-2 px-3 glory-bg hover:opacity-90 rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-50 text-white"
-            >
-              {loadingAI ? 'Dreaming recap...' : 'Generate AI Glory Recap'}
-            </button>
-          )}
         </div>
       )}
     </div>

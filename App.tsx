@@ -25,7 +25,7 @@ const App: React.FC = () => {
   const [matches, setMatches] = useState<Match[]>([]);
   const [boysGames, setBoysGames] = useState<string[]>([]);
   const [girlsGames, setGirlsGames] = useState<string[]>([]);
-  const [announcement, setAnnouncement] = useState('Welcome to Fight for Glory 2026 at MACET!');
+  const [announcement, setAnnouncement] = useState('Final Day of Fight for Glory 2026 at MACET!');
   const [liveStreamUrl, setLiveStreamUrl] = useState('https://www.youtube.com/embed/dQw4w9WgXcQ');
 
   const [isAdmin, setIsAdmin] = useState(false);
@@ -34,6 +34,46 @@ const App: React.FC = () => {
   const [viewState, setViewState] = useState<ViewState>('LANDING');
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [activeSport, setActiveSport] = useState<string | null>(null);
+
+  // Match filtering state
+  const [matchFilters, setMatchFilters] = useState({
+    sport: '',
+    gender: '',
+    venue: '',
+    batch: ''
+  });
+
+  // Filter matches based on selected filters
+  const filteredMatches = useMemo(() => {
+    return matches.filter(match => {
+      // Sport filter
+      if (matchFilters.sport && match.sport !== matchFilters.sport) {
+        return false;
+      }
+      
+      // Gender filter
+      if (matchFilters.gender && match.gender !== matchFilters.gender) {
+        return false;
+      }
+      
+      // Venue filter
+      if (matchFilters.venue && match.venue !== matchFilters.venue) {
+        return false;
+      }
+      
+      // Batch filter (assuming batch is in details or a separate field)
+      if (matchFilters.batch) {
+        // Check if batch is in details or as a separate field
+        const matchBatch = match.details?.batch || match.batch || '';
+        if (matchBatch !== matchFilters.batch) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  }, [matches, matchFilters]);
+
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -799,15 +839,110 @@ const App: React.FC = () => {
             <div className="space-y-12 animate-in fade-in">
               <h2 className="font-orbitron text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black uppercase italic tracking-tighter text-center pr-4 sm:pr-8 lg:pr-12">BATTLE <span className="glory-gradient">ARENA</span></h2>
 
+              {/* Filter Controls */}
+              <div className="mb-8">
+                <div className="glass rounded-2xl border border-white/10 p-6 space-y-4">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-300 mb-4">Filter Matches</h3>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {/* Sport Filter */}
+                    <div>
+                      <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Sport</label>
+                      <select
+                        value={matchFilters.sport}
+                        onChange={(e) => setMatchFilters(prev => ({ ...prev, sport: e.target.value }))}
+                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                      >
+                        <option value="">All Sports</option>
+                        <option value="Cricket">Cricket</option>
+                        <option value="Football">Football</option>
+                        <option value="Volleyball">Volleyball</option>
+                        <option value="Badminton">Badminton</option>
+                        <option value="Kabaddi">Kabaddi</option>
+                        <option value="Musical Chair">Musical Chair</option>
+                        <option value="Kho-Kho">Kho-Kho</option>
+                        <option value="LUDO">LUDO</option>
+                        <option value="Chess">Chess</option>
+                        <option value="Carrom">Carrom</option>
+                        <option value="Race">Race</option>
+                        <option value="Skipping">Skipping</option>
+                        <option value="Tug of War">Tug of War</option>
+                        <option value="Shot Put">Shot Put</option>
+                        <option value="Needle & Thread">Needle & Thread</option>
+                        <option value="Spoon Race">Spoon Race</option>
+                      </select>
+                    </div>
+
+                    {/* Gender Filter */}
+                    <div>
+                      <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Gender</label>
+                      <select
+                        value={matchFilters.gender}
+                        onChange={(e) => setMatchFilters(prev => ({ ...prev, gender: e.target.value }))}
+                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                      >
+                        <option value="">All Genders</option>
+                        <option value="Boys">Boys</option>
+                        <option value="Girls">Girls</option>
+                        <option value="Mixed">Mixed</option>
+                      </select>
+                    </div>
+
+                    {/* Venue Filter */}
+                    <div>
+                      <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Venue</label>
+                      <select
+                        value={matchFilters.venue}
+                        onChange={(e) => setMatchFilters(prev => ({ ...prev, venue: e.target.value }))}
+                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                      >
+                        <option value="">All Venues</option>
+                        <option value="Playground-1">Playground-1</option>
+                        <option value="Playground-2">Playground-2</option>
+                        <option value="Playground-3">Playground-3</option>
+                        <option value="Playground-4">Playground-4</option>
+                        <option value="Seminar-Hall">Seminar-Hall</option>
+                      </select>
+                    </div>
+
+                    {/* Batch Filter */}
+                    <div>
+                      <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Batch</label>
+                      <select
+                        value={matchFilters.batch}
+                        onChange={(e) => setMatchFilters(prev => ({ ...prev, batch: e.target.value }))}
+                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                      >
+                        <option value="">All Batches</option>
+                        <option value="A">Batch A</option>
+                        <option value="B">Batch B</option>
+                        <option value="C">Batch C</option>
+                        <option value="D">Batch D</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Clear Filters Button */}
+                  <div className="flex justify-end mt-4">
+                    <button
+                      onClick={() => setMatchFilters({ sport: '', gender: '', venue: '', batch: '' })}
+                      className="px-4 py-2 bg-slate-600 hover:bg-slate-500 rounded-lg text-xs font-medium uppercase tracking-wider text-white transition-colors"
+                    >
+                      Clear Filters
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               {/* Live Matches */}
               <div className="space-y-6">
                 <h3 className="font-oswald text-3xl font-bold uppercase flex items-center gap-3 tracking-widest text-rose-500">
                   <span className="w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
                   Live Battles
                 </h3>
-                {matches.filter(m => m.status === 'LIVE').length > 0 ? (
+                {filteredMatches.filter(m => m.status === 'LIVE').length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {matches.filter(m => m.status === 'LIVE').map(m => (
+                    {filteredMatches.filter(m => m.status === 'LIVE').map(m => (
                       <div key={m.id} className="relative group">
                         <MatchCard
                           match={m}
@@ -837,9 +972,9 @@ const App: React.FC = () => {
                   <i className="fa-solid fa-clock"></i>
                   Upcoming Battles
                 </h3>
-                {matches.filter(m => m.status === 'UPCOMING').length > 0 ? (
+                {filteredMatches.filter(m => m.status === 'UPCOMING').length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {matches.filter(m => m.status === 'UPCOMING').map(m => (
+                    {filteredMatches.filter(m => m.status === 'UPCOMING').map(m => (
                       <div key={m.id} className="relative group">
                         <MatchCard
                           match={m}
@@ -869,9 +1004,9 @@ const App: React.FC = () => {
                   <i className="fa-solid fa-trophy"></i>
                   Completed Battles
                 </h3>
-                {matches.filter(m => m.status === 'COMPLETED').length > 0 ? (
+                {filteredMatches.filter(m => m.status === 'COMPLETED').length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {matches.filter(m => m.status === 'COMPLETED').map(m => (
+                    {filteredMatches.filter(m => m.status === 'COMPLETED').map(m => (
                       <div key={m.id} className="relative group">
                         <MatchCard
                           match={m}
