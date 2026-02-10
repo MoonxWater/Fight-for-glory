@@ -458,6 +458,22 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   <option value="TeamB">Team B</option>
                 </select>
               </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Winner
+                </label>
+                <select
+                  name="winner"
+                  value={formData.details.winner || 'None'}
+                  onChange={handleDetailsChange}
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                >
+                  <option value="">Select Winner</option>
+                  <option value="None">None</option>
+                  <option value={formData.teamA}>{formData.teamA}</option>
+                  <option value={formData.teamB}>{formData.teamB}</option>
+                </select>
+              </div>
             </div>
           )}
 
@@ -505,6 +521,22 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   <option value="1st Half">1st Half</option>
                   <option value="2nd Half">2nd Half</option>
                   <option value="Extra">Extra</option>
+                </select>
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Winner
+                </label>
+                <select
+                  name="winner"
+                  value={formData.details.winner || 'None'}
+                  onChange={handleDetailsChange}
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                >
+                  <option value="">Select Winner</option>
+                  <option value="None">None</option>
+                  <option value={formData.teamA}>{formData.teamA}</option>
+                  <option value={formData.teamB}>{formData.teamB}</option>
                 </select>
               </div>
             </div>
@@ -565,6 +597,22 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   required
                 />
               </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Winner
+                </label>
+                <select
+                  name="winner"
+                  value={formData.details.winner || 'None'}
+                  onChange={handleDetailsChange}
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                >
+                  <option value="">Select Winner</option>
+                  <option value="None">None</option>
+                  <option value={formData.teamA}>{formData.teamA}</option>
+                  <option value={formData.teamB}>{formData.teamB}</option>
+                </select>
+              </div>
             </div>
           )}
 
@@ -622,6 +670,22 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Winner
+                </label>
+                <select
+                  name="winner"
+                  value={formData.details.winner || 'None'}
+                  onChange={handleDetailsChange}
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                >
+                  <option value="">Select Winner</option>
+                  <option value="None">None</option>
+                  <option value={formData.teamA}>{formData.teamA}</option>
+                  <option value={formData.teamB}>{formData.teamB}</option>
+                </select>
               </div>
             </div>
           )}
@@ -681,11 +745,28 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   required
                 />
               </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Winner
+                </label>
+                <select
+                  name="winner"
+                  value={formData.details.winner || 'None'}
+                  onChange={handleDetailsChange}
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                >
+                  <option value="">Select Winner</option>
+                  <option value="None">None</option>
+                  <option value={formData.teamA}>{formData.teamA}</option>
+                  <option value={formData.teamB}>{formData.teamB}</option>
+                </select>
+              </div>
             </div>
           )}
 
           {/* Musical Chair Fields */}
           {formData.sport === 'Musical Chair' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
                 Rounds Completed *
@@ -699,6 +780,23 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 required
               />
             </div>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Winner
+              </label>
+              <select
+                name="winner"
+                value={formData.details.winner || 'None'}
+                onChange={handleDetailsChange}
+                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+              >
+                <option value="">Select Winner</option>
+                <option value="None">None</option>
+                <option value={formData.teamA}>{formData.teamA}</option>
+                <option value={formData.teamB}>{formData.teamB}</option>
+              </select>
+            </div>
+          </div>
           )}
 
           {/* Kho-Kho Fields */}
@@ -730,7 +828,23 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   required
                 />
               </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Winner
+              </label>
+              <select
+                name="winner"
+                value={formData.details.winner || 'None'}
+                onChange={handleDetailsChange}
+                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+              >
+                <option value="">Select Winner</option>
+                <option value="None">None</option>
+                <option value={formData.teamA}>{formData.teamA}</option>
+                <option value={formData.teamB}>{formData.teamB}</option>
+              </select>
             </div>
+          </div>
           )}
 
           {/* LUDO Fields */}
