@@ -71,6 +71,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       setShowCreateForm(false);
       setRefreshKey(prev => prev + 1);
       setError(null); // Clear any existing errors on success
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // Auto-scroll to top
       return true;
     } catch (err) {
       console.error('Error creating match:', err);
@@ -109,6 +110,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const handleEditMatch = (match: Match) => {
     setEditingMatch(match);
     setShowCreateForm(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Auto-scroll to top
   };
 
   const handleCancelEdit = () => {
@@ -171,7 +173,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           {/* Action Buttons */}
           <div className="flex gap-4 mb-6">
             <button
-              onClick={() => setShowCreateForm(true)}
+              onClick={() => {
+                setShowCreateForm(true);
+                window.scrollTo({ top: 0, behavior: 'smooth' }); // Auto-scroll to top
+              }}
               className="bg-gradient-to-r from-rose-600 to-orange-600 hover:from-rose-500 hover:to-orange-500 text-white px-6 py-3 rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg"
             >
               + Create New Match

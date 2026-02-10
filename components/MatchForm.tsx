@@ -18,6 +18,9 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
     status: match?.status || 'UPCOMING' as const,
     gender: match?.gender || 'boys',
     venue: match?.venue || 'Playground-1',
+    batchA: match?.details?.batchA || '24',
+    batchB: match?.details?.batchB || '24',
+    matchType: match?.details?.matchType || 'normal',
     details: (() => {
       const d = match?.details || {} as any;
       // If we have a formatted wickets string, parse it for the UI
@@ -120,19 +123,25 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
 
       if (finalData.sport === 'Cricket') {
         finalData.details = {
-          oversA: Number(d.oversA) || 0,
-          wicketsA: Number(d.wicketsA) || 0,
-          oversB: Number(d.oversB) || 0,
-          wicketsB: Number(d.wicketsB) || 0,
+          oversA: Math.floor(Number(d.oversA) || 0),
+          wicketsA: Math.floor(Number(d.wicketsA) || 0),
+          oversB: Math.floor(Number(d.oversB) || 0),
+          wicketsB: Math.floor(Number(d.wicketsB) || 0),
           currentInnings: d.currentInnings || 'None',
-          winner: d.winner || 'None'
+          winner: d.winner || 'None',
+          batchA: formData.batchA,
+          batchB: formData.batchB,
+          matchType: formData.matchType
         };
       } else if (finalData.sport === 'Football') {
         finalData.details = {
           halfTimeScoreA: Math.floor(Number(d.halfTimeScoreA) || 0),
           halfTimeScoreB: Math.floor(Number(d.halfTimeScoreB) || 0),
           currentPeriod: d.currentPeriod || '1st Half',
-          winner: d.winner || 'None'
+          winner: d.winner || 'None',
+          batchA: formData.batchA,
+          batchB: formData.batchB,
+          matchType: formData.matchType
         };
       } else if (finalData.sport === 'Volleyball') {
         finalData.details = {
@@ -140,7 +149,10 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
           setsWonB: Math.floor(Number(d.setsWonB) || 0),
           currentSetScoreA: Math.floor(Number(d.currentSetScoreA) || 0),
           currentSetScoreB: Math.floor(Number(d.currentSetScoreB) || 0),
-          winner: d.winner || 'None'
+          winner: d.winner || 'None',
+          batchA: formData.batchA,
+          batchB: formData.batchB,
+          matchType: formData.matchType
         };
       } else if (finalData.sport === 'Badminton') {
         finalData.details = {
@@ -148,7 +160,10 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
           setsWonB: Math.floor(Number(d.setsWonB) || 0),
           currentSetScoreA: Math.floor(Number(d.currentSetScoreA) || 0),
           currentSetScoreB: Math.floor(Number(d.currentSetScoreB) || 0),
-          winner: d.winner || 'None'
+          winner: d.winner || 'None',
+          batchA: formData.batchA,
+          batchB: formData.batchB,
+          matchType: formData.matchType
         };
       } else if (finalData.sport === 'Kabaddi') {
         finalData.details = {
@@ -156,67 +171,103 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
           raidPointsB: Math.floor(Number(d.raidPointsB) || 0),
           tacklePointsA: Math.floor(Number(d.tacklePointsA) || 0),
           tacklePointsB: Math.floor(Number(d.tacklePointsB) || 0),
-          winner: d.winner || 'None'
+          winner: d.winner || 'None',
+          batchA: formData.batchA,
+          batchB: formData.batchB,
+          matchType: formData.matchType
         };
       } else if (finalData.sport === 'Musical Chair') {
         finalData.details = {
           roundsCompleted: Math.floor(Number(d.roundsCompleted) || 0),
-          winner: d.winner || 'None'
+          winner: d.winner || 'None',
+          batchA: formData.batchA,
+          batchB: formData.batchB,
+          matchType: formData.matchType
         };
       } else if (finalData.sport === 'Kho-Kho') {
         finalData.details = {
           inningsA: Math.floor(Number(d.inningsA) || 0),
           inningsB: Math.floor(Number(d.inningsB) || 0),
-          winner: d.winner || 'None'
+          winner: d.winner || 'None',
+          batchA: formData.batchA,
+          batchB: formData.batchB,
+          matchType: formData.matchType
         };
       } else if (finalData.sport === 'LUDO') {
         finalData.details = {
           coinsA: Math.floor(Number(d.coinsA) || 0),
           coinsB: Math.floor(Number(d.coinsB) || 0),
-          winner: d.winner || 'None'
+          winner: d.winner || 'None',
+          batchA: formData.batchA,
+          batchB: formData.batchB,
+          matchType: formData.matchType
         };
       } else if (finalData.sport === 'Chess') {
         finalData.details = {
           movesPlayed: Math.floor(Number(d.movesPlayed) || 0),
-          winner: d.winner || 'None'
+          winner: d.winner || 'None',
+          batchA: formData.batchA,
+          batchB: formData.batchB,
+          matchType: formData.matchType
         };
       } else if (finalData.sport === 'Carrom') {
         finalData.details = {
           boardsWonA: Math.floor(Number(d.boardsWonA) || 0),
           boardsWonB: Math.floor(Number(d.boardsWonB) || 0),
-          winner: d.winner || 'None'
+          winner: d.winner || 'None',
+          batchA: formData.batchA,
+          batchB: formData.batchB,
+          matchType: formData.matchType
         };
       } else if (finalData.sport === 'Race') {
         finalData.details = {
           distance: Number(d.distance) || 100,
-          winner: d.winner || 'None'
+          winner: d.winner || 'None',
+          batchA: formData.batchA,
+          batchB: formData.batchB,
+          matchType: formData.matchType
         };
       } else if (finalData.sport === 'Skipping') {
         finalData.details = {
           jumps: Math.floor(Number(d.jumps) || 0),
-          winner: d.winner || 'None'
+          winner: d.winner || 'None',
+          batchA: formData.batchA,
+          batchB: formData.batchB,
+          matchType: formData.matchType
         };
       } else if (finalData.sport === 'Tug of War') {
         finalData.details = {
           roundsWonA: Math.floor(Number(d.roundsWonA) || 0),
           roundsWonB: Math.floor(Number(d.roundsWonB) || 0),
-          winner: d.winner || 'None'
+          winner: d.winner || 'None',
+          batchA: formData.batchA,
+          batchB: formData.batchB,
+          matchType: formData.matchType
         };
       } else if (finalData.sport === 'Shot Put') {
         finalData.details = {
           distanceA: Number(d.distanceA) || 0,
           distanceB: Number(d.distanceB) || 0,
-          winner: d.winner || 'None'
+          winner: d.winner || 'None',
+          batchA: formData.batchA,
+          batchB: formData.batchB,
+          matchType: formData.matchType
         };
       } else if (finalData.sport === 'Needle & Thread') {
         finalData.details = {
           completed: Boolean(d.completed),
-          winner: d.winner || 'None'
+          winner: d.winner || 'None',
+          batchA: formData.batchA,
+          batchB: formData.batchB,
+          matchType: formData.matchType
         };
       } else if (finalData.sport === 'Spoon Race') {
         finalData.details = {
           roundsCompleted: Math.floor(Number(d.roundsCompleted) || 0),
-          winner: d.winner || 'None'
+          winner: d.winner || 'None',
+          batchA: formData.batchA,
+          batchB: formData.batchB,
+          matchType: formData.matchType
         };
       }
 
@@ -277,25 +328,23 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
           </select>
         </div>
 
-        {/* Status - Only show when editing */
-          match && (
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Match Status *
-              </label>
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleInputChange}
-                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                required
-              >
-                <option value="UPCOMING">Upcoming</option>
-                <option value="LIVE">Live</option>
-                <option value="COMPLETED">Completed</option>
-              </select>
-            </div>
-          )}
+        {/* Status */}
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-2">
+            Match Status *
+          </label>
+          <select
+            name="status"
+            value={formData.status}
+            onChange={handleInputChange}
+            className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            required
+          >
+            <option value="UPCOMING">Upcoming</option>
+            <option value="LIVE">Live</option>
+            <option value="COMPLETED">Completed</option>
+          </select>
+        </div>
 
         {/* Venue */}
         <div>
@@ -348,6 +397,66 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white placeholder-slate-400 focus:ring-2 focus:ring-rose-500 focus:border-transparent"
             required
           />
+        </div>
+
+        {/* Team A Batch */}
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-2">
+            Team A Batch *
+          </label>
+          <select
+            name="batchA"
+            value={formData.batchA}
+            onChange={handleInputChange}
+            className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            required
+          >
+            <option value="">Select Batch</option>
+            <option value="22">2022 Batch</option>
+            <option value="23">2023 Batch</option>
+            <option value="24">2024 Batch</option>
+            <option value="25">2025 Batch</option>
+          </select>
+        </div>
+
+        {/* Team B Batch */}
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-2">
+            Team B Batch *
+          </label>
+          <select
+            name="batchB"
+            value={formData.batchB}
+            onChange={handleInputChange}
+            className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            required
+          >
+            <option value="">Select Batch</option>
+            <option value="22">2022 Batch</option>
+            <option value="23">2023 Batch</option>
+            <option value="24">2024 Batch</option>
+            <option value="25">2025 Batch</option>
+          </select>
+        </div>
+
+        {/* Match Type */}
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-2">
+            Match Type *
+          </label>
+          <select
+            name="matchType"
+            value={formData.matchType}
+            onChange={handleInputChange}
+            className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            required
+          >
+            <option value="">Select Match Type</option>
+            <option value="normal">Normal</option>
+            <option value="quarter final">Quarter Final</option>
+            <option value="semi final">Semi Final</option>
+            <option value="final">Final</option>
+          </select>
         </div>
 
         {/* Scores - Only show when editing */}
