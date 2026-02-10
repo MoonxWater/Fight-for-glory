@@ -10,13 +10,19 @@ interface MatchListProps {
 
 export const MatchList: React.FC<MatchListProps> = ({ matches, onEdit, onDelete, sportOptions }) => {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-  const [filterSport, setFilterSport] = useState<string>('all');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [filterSport, setFilterSport] = useState<string>('');
+  const [filterStatus, setFilterStatus] = useState<string>('');
+  const [filterGender, setFilterGender] = useState<string>('');
+  const [filterVenue, setFilterVenue] = useState<string>('');
+  const [filterBatch, setFilterBatch] = useState<string>('');
 
   const filteredMatches = matches.filter(match => {
-    const sportMatch = filterSport === 'all' || match.sport === filterSport;
-    const statusMatch = filterStatus === 'all' || match.status === filterStatus;
-    return sportMatch && statusMatch;
+    const sportMatch = !filterSport || match.sport === filterSport;
+    const statusMatch = !filterStatus || match.status === filterStatus;
+    const genderMatch = !filterGender || match.gender === filterGender;
+    const venueMatch = !filterVenue || match.venue === filterVenue;
+    const batchMatch = !filterBatch || match.batch === filterBatch;
+    return sportMatch && statusMatch && genderMatch && venueMatch && batchMatch;
   });
 
   const handleDelete = async (id: string) => {
@@ -60,7 +66,7 @@ export const MatchList: React.FC<MatchListProps> = ({ matches, onEdit, onDelete,
     <div>
       {/* Filters */}
       <div className="bg-slate-800 rounded-xl p-4 border border-slate-700 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">Filter by Sport</label>
             <select
@@ -68,10 +74,23 @@ export const MatchList: React.FC<MatchListProps> = ({ matches, onEdit, onDelete,
               onChange={(e) => setFilterSport(e.target.value)}
               className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
             >
-              <option value="all">All Sports</option>
-              {sportOptions.map(sport => (
-                <option key={sport} value={sport}>{sport}</option>
-              ))}
+              <option value="">All Sports</option>
+              <option value="Cricket">Cricket</option>
+              <option value="Football">Football</option>
+              <option value="Volleyball">Volleyball</option>
+              <option value="Badminton">Badminton</option>
+              <option value="Kabaddi">Kabaddi</option>
+              <option value="Musical Chair">Musical Chair</option>
+              <option value="Kho-Kho">Kho-Kho</option>
+              <option value="LUDO">Ludo</option>
+              <option value="Chess">Chess</option>
+              <option value="Carrom">Carrom</option>
+              <option value="Race">Race</option>
+              <option value="Skipping">Skipping</option>
+              <option value="Tug of War">Tug of War</option>
+              <option value="Shot Put">Shot Put</option>
+              <option value="Needle & Thread">Needle & Thread</option>
+              <option value="Spoon Race">Spoon Race</option>
             </select>
           </div>
           <div>
@@ -81,10 +100,51 @@ export const MatchList: React.FC<MatchListProps> = ({ matches, onEdit, onDelete,
               onChange={(e) => setFilterStatus(e.target.value)}
               className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
             >
-              <option value="all">All Status</option>
+              <option value="">All Status</option>
               <option value="LIVE">Live</option>
               <option value="UPCOMING">Upcoming</option>
               <option value="COMPLETED">Completed</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Filter by Gender</label>
+            <select
+              value={filterGender}
+              onChange={(e) => setFilterGender(e.target.value)}
+              className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            >
+              <option value="">All Genders</option>
+              <option value="boys">Boys</option>
+              <option value="girls">Girls</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Filter by Venue</label>
+            <select
+              value={filterVenue}
+              onChange={(e) => setFilterVenue(e.target.value)}
+              className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            >
+              <option value="">All Venues</option>
+              <option value="Playground-1">Playground-1</option>
+              <option value="Playground-2">Playground-2</option>
+              <option value="Playground-3">Playground-3</option>
+              <option value="Playground-4">Playground-4</option>
+              <option value="Seminar-Hall">Seminar-Hall</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Filter by Batch</label>
+            <select
+              value={filterBatch}
+              onChange={(e) => setFilterBatch(e.target.value)}
+              className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            >
+              <option value="">All Batches</option>
+              <option value="22">2022 Batch</option>
+              <option value="23">2023 Batch</option>
+              <option value="24">2024 Batch</option>
+              <option value="25">2025 Batch</option>
             </select>
           </div>
         </div>

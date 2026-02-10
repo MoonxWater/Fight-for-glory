@@ -25,7 +25,7 @@ const App: React.FC = () => {
   const [matches, setMatches] = useState<Match[]>([]);
   const [boysGames, setBoysGames] = useState<string[]>([]);
   const [girlsGames, setGirlsGames] = useState<string[]>([]);
-  const [announcement, setAnnouncement] = useState('Final Day of Fight for Glory 2026 at MACET!');
+  const [announcement, setAnnouncement] = useState('Day-3 of Fight for Glory 2026 at MACET!');
   const [liveStreamUrl, setLiveStreamUrl] = useState('https://www.youtube.com/embed/dQw4w9WgXcQ');
 
   const [isAdmin, setIsAdmin] = useState(false);
@@ -267,7 +267,7 @@ const App: React.FC = () => {
     if (!teamA) return;
     const teamB = prompt("Enter Team B Name:");
     if (!teamB) return;
-    const venue = prompt("Enter Venue (Required):", "Main Ground");
+    const venue = prompt("Enter Venue (Required):", "Playground-1");
     if (!venue) return;
 
     let details: any = {};
@@ -705,7 +705,7 @@ const App: React.FC = () => {
           {viewState === 'LANDING' && (
             <div className="space-y-20 animate-in fade-in zoom-in-95 duration-700">
               <div className="text-center max-w-5xl mx-auto space-y-8">
-                <h2 className="text-rose-500 font-orbitron font-bold tracking-[0.4em] uppercase">Maulana Azad College of Engineering and Technology</h2>
+                <h2 className="text-rose-500 font-orbitron font-bold tracking-[0.4em] uppercase">Maulana Azad College of Engineering and Technology <br/>Presents</h2>
                 <h2 className="font-orbitron text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black uppercase italic tracking-tighter leading-[0.85] pr-4 sm:pr-8 lg:pr-12">
                   FIGHT FOR <br /><span className="glory-gradient inline-block mr-2 sm:mr-4 lg:mr-6">GLORY 2026</span>
                 </h2>
@@ -861,7 +861,7 @@ const App: React.FC = () => {
                         <option value="Kabaddi">Kabaddi</option>
                         <option value="Musical Chair">Musical Chair</option>
                         <option value="Kho-Kho">Kho-Kho</option>
-                        <option value="LUDO">LUDO</option>
+                        <option value="LUDO">Ludo</option>
                         <option value="Chess">Chess</option>
                         <option value="Carrom">Carrom</option>
                         <option value="Race">Race</option>
@@ -882,9 +882,8 @@ const App: React.FC = () => {
                         className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                       >
                         <option value="">All Genders</option>
-                        <option value="Boys">Boys</option>
-                        <option value="Girls">Girls</option>
-                        <option value="Mixed">Mixed</option>
+                        <option value="boys">Boys</option>
+                        <option value="girls">Girls</option>
                       </select>
                     </div>
 
@@ -914,10 +913,10 @@ const App: React.FC = () => {
                         className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                       >
                         <option value="">All Batches</option>
-                        <option value="A">Batch A</option>
-                        <option value="B">Batch B</option>
-                        <option value="C">Batch C</option>
-                        <option value="D">Batch D</option>
+                        <option value="22">2022 Batch</option>
+                        <option value="23">2023 Batch</option>
+                        <option value="24">2024 Batch</option>
+                        <option value="25">2025 Batch</option>
                       </select>
                     </div>
                   </div>
