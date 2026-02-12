@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Match, MatchUpdates, ViewState, SportType } from './types';
 import { SPORT_ICONS, SPORT_CONFIG, BOYS_SPORTS, GIRLS_SPORTS } from './constants';
 import { MatchCard } from './components/MatchCard';
+import { MatchListItem } from './components/MatchListItem';
 import { AdminPanel } from './components/AdminPanel';
 import { Footer } from './components/Footer';
 import { api, setAdminKey } from './services/api';
@@ -34,6 +35,7 @@ const App: React.FC = () => {
   const [viewState, setViewState] = useState<ViewState>('LANDING');
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [activeSport, setActiveSport] = useState<string | null>(null);
+  const [matchViewMode, setMatchViewMode] = useState<'grid' | 'list'>('grid');
 
   // Match filtering state
   const [matchFilters, setMatchFilters] = useState({
@@ -61,11 +63,11 @@ const App: React.FC = () => {
         return false;
       }
       
-      // Batch filter (assuming batch is in details or a separate field)
+      // Batch filter (check both batchA and batchB in details)
       if (matchFilters.batch) {
-        // Check if batch is in details or as a separate field
-        const matchBatch = match.details?.batch || match.batch || '';
-        if (matchBatch !== matchFilters.batch) {
+        const batchA = match.details?.batchA || '';
+        const batchB = match.details?.batchB || '';
+        if (batchA !== matchFilters.batch && batchB !== matchFilters.batch) {
           return false;
         }
       }
@@ -797,6 +799,77 @@ const App: React.FC = () => {
                 )}
               </div>
 
+              {/* Filter Controls for Sport Detail */}
+              <div className="mb-8">
+                <div className="glass rounded-2xl border border-white/10 p-6 space-y-4">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-300 mb-4">Filter {activeSport} Matches</h3>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {/* Status Filter */}
+                    <div>
+                      <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Status</label>
+                      <select
+                        value={matchFilters.status}
+                        onChange={(e) => setMatchFilters(prev => ({ ...prev, status: e.target.value }))}
+                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                      >
+                        <option value="">All Status</option>
+                        <option value="LIVE">Live</option>
+                        <option value="UPCOMING">Upcoming</option>
+                        <option value="COMPLETED">Completed</option>
+                      </select>
+                    </div>
+
+                    {/* Venue Filter */}
+                    <div>
+                      <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Venue</label>
+                      <select
+                        value={matchFilters.venue}
+                        onChange={(e) => setMatchFilters(prev => ({ ...prev, venue: e.target.value }))}
+                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                      >
+                        <option value="">All Venues</option>
+                        <option value="Playground-1">Playground-1</option>
+                        <option value="Playground-2">Playground-2</option>
+                        <option value="Playground-3">Playground-3</option>
+                        <option value="Playground-4">Playground-4</option>
+                        <option value="Seminar-Hall">Seminar-Hall</option>
+                      </select>
+                    </div>
+
+                    {/* Batch Filter */}
+                    <div>
+                      <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Batch</label>
+                      <select
+                        value={matchFilters.batch}
+                        onChange={(e) => setMatchFilters(prev => ({ ...prev, batch: e.target.value }))}
+                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                      >
+                        <option value="">All Batches</option>
+                        <option value="22">2022 Batch</option>
+                        <option value="23">2023 Batch</option>
+                        <option value="24">2024 Batch</option>
+                        <option value="25">2025 Batch</option>
+                      </select>
+                    </div>
+
+                    {/* Gender Filter */}
+                    <div>
+                      <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Gender</label>
+                      <select
+                        value={matchFilters.gender}
+                        onChange={(e) => setMatchFilters(prev => ({ ...prev, gender: e.target.value }))}
+                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                      >
+                        <option value="">All Genders</option>
+                        <option value="boys">Boys</option>
+                        <option value="girls">Girls</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div className="space-y-6">
                 <h4 className="font-oswald text-2xl font-bold uppercase flex items-center gap-3 tracking-widest text-rose-500">
                   <span className="w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
@@ -814,7 +887,7 @@ const App: React.FC = () => {
                           onUpdate={updateMatch}
                         />
                         {isAdmin && (
-                          <button onClick={() => handleDeleteMatch(m.id)} className="absolute top-4 right-4 text-slate-500 hover:text-red-500 transition-colors p-2 glass rounded-full shadow-lg opacity-0 group-hover:opacity-100">
+                          <button onClick={() => handleDeleteMatch(m.id)} className="absolute top-4 left-1/2 transform -translate-x-1/2 text-slate-500 hover:text-red-500 transition-colors p-2 glass rounded-full shadow-lg opacity-0 group-hover:opacity-100">
                             <i className="fa-solid fa-xmark"></i>
                           </button>
                         )}
@@ -837,7 +910,20 @@ const App: React.FC = () => {
 
           {viewState === 'MATCHES' && (
             <div className="space-y-12 animate-in fade-in">
-              <h2 className="font-orbitron text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black uppercase italic tracking-tighter text-center pr-4 sm:pr-8 lg:pr-12">BATTLE <span className="glory-gradient">ARENA</span></h2>
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="font-orbitron text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black uppercase italic tracking-tighter text-center pr-4 sm:pr-8 lg:pr-12">BATTLE <span className="glory-gradient">ARENA</span></h2>
+                <button
+                  onClick={() => {
+                    setLoading(true);
+                    fetchData();
+                  }}
+                  disabled={loading}
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 disabled:bg-rose-800 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                >
+                  <i className={`fa-solid fa-sync-alt ${loading ? 'animate-spin' : ''}`}></i>
+                  Refresh
+                </button>
+              </div>
 
               {/* Filter Controls */}
               <div className="mb-8">
@@ -933,6 +1019,34 @@ const App: React.FC = () => {
                 </div>
               </div>
 
+              {/* View Mode Toggle */}
+              <div className="flex justify-end mb-6">
+                <div className="glass rounded-lg border border-white/10 p-1 flex">
+                  <button
+                    onClick={() => setMatchViewMode('grid')}
+                    className={`px-4 py-2 rounded-md text-xs font-medium uppercase tracking-wider transition-colors ${
+                      matchViewMode === 'grid' 
+                        ? 'bg-rose-600 text-white' 
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <i className="fa-solid fa-grid mr-2"></i>
+                    Grid
+                  </button>
+                  <button
+                    onClick={() => setMatchViewMode('list')}
+                    className={`px-4 py-2 rounded-md text-xs font-medium uppercase tracking-wider transition-colors ${
+                      matchViewMode === 'list' 
+                        ? 'bg-rose-600 text-white' 
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <i className="fa-solid fa-list mr-2"></i>
+                    List
+                  </button>
+                </div>
+              </div>
+
               {/* Live Matches */}
               <div className="space-y-6">
                 <h3 className="font-oswald text-3xl font-bold uppercase flex items-center gap-3 tracking-widest text-rose-500">
@@ -940,24 +1054,40 @@ const App: React.FC = () => {
                   Live Battles
                 </h3>
                 {filteredMatches.filter(m => m.status === 'LIVE').length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredMatches.filter(m => m.status === 'LIVE').map(m => (
-                      <div key={m.id} className="relative group">
-                        <MatchCard
+                  matchViewMode === 'grid' ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {filteredMatches.filter(m => m.status === 'LIVE').map(m => (
+                        <div key={m.id} className="relative group">
+                          <MatchCard
+                            match={m}
+                            teamA={m.teamA}
+                            teamB={m.teamB}
+                            isAdmin={isAdmin}
+                            onUpdate={updateMatch}
+                          />
+                          {isAdmin && (
+                            <button onClick={() => handleDeleteMatch(m.id)} className="absolute top-4 left-1/2 transform -translate-x-1/2 text-slate-500 hover:text-red-500 transition-colors p-2 glass rounded-full shadow-lg opacity-0 group-hover:opacity-100">
+                              <i className="fa-solid fa-xmark"></i>
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {filteredMatches.filter(m => m.status === 'LIVE').map(m => (
+                        <MatchListItem
+                          key={m.id}
                           match={m}
                           teamA={m.teamA}
                           teamB={m.teamB}
                           isAdmin={isAdmin}
                           onUpdate={updateMatch}
+                          onDelete={handleDeleteMatch}
                         />
-                        {isAdmin && (
-                          <button onClick={() => handleDeleteMatch(m.id)} className="absolute top-4 right-4 text-slate-500 hover:text-red-500 transition-colors p-2 glass rounded-full shadow-lg opacity-0 group-hover:opacity-100">
-                            <i className="fa-solid fa-xmark"></i>
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )
                 ) : (
                   <div className="py-12 text-center glass rounded-[3rem] border-2 border-dashed border-slate-800 uppercase text-[10px] font-black text-slate-700 tracking-widest">
                     No Live Matches Currently
@@ -972,24 +1102,40 @@ const App: React.FC = () => {
                   Upcoming Battles
                 </h3>
                 {filteredMatches.filter(m => m.status === 'UPCOMING').length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredMatches.filter(m => m.status === 'UPCOMING').map(m => (
-                      <div key={m.id} className="relative group">
-                        <MatchCard
+                  matchViewMode === 'grid' ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {filteredMatches.filter(m => m.status === 'UPCOMING').map(m => (
+                        <div key={m.id} className="relative group">
+                          <MatchCard
+                            match={m}
+                            teamA={m.teamA}
+                            teamB={m.teamB}
+                            isAdmin={isAdmin}
+                            onUpdate={updateMatch}
+                          />
+                          {isAdmin && (
+                            <button onClick={() => handleDeleteMatch(m.id)} className="absolute top-4 left-1/2 transform -translate-x-1/2 text-slate-500 hover:text-red-500 transition-colors p-2 glass rounded-full shadow-lg opacity-0 group-hover:opacity-100">
+                              <i className="fa-solid fa-xmark"></i>
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {filteredMatches.filter(m => m.status === 'UPCOMING').map(m => (
+                        <MatchListItem
+                          key={m.id}
                           match={m}
                           teamA={m.teamA}
                           teamB={m.teamB}
                           isAdmin={isAdmin}
                           onUpdate={updateMatch}
+                          onDelete={handleDeleteMatch}
                         />
-                        {isAdmin && (
-                          <button onClick={() => handleDeleteMatch(m.id)} className="absolute top-4 right-4 text-slate-500 hover:text-red-500 transition-colors p-2 glass rounded-full shadow-lg opacity-0 group-hover:opacity-100">
-                            <i className="fa-solid fa-xmark"></i>
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )
                 ) : (
                   <div className="py-12 text-center glass rounded-[3rem] border-2 border-dashed border-slate-800 uppercase text-[10px] font-black text-slate-700 tracking-widest">
                     No Upcoming Matches Scheduled
@@ -999,29 +1145,45 @@ const App: React.FC = () => {
 
               {/* Completed Matches */}
               <div className="space-y-6">
-                <h3 className="font-oswald text-3xl font-bold uppercase flex items-center gap-3 tracking-widest text-slate-500">
+                <h3 className="font-oswald text-3xl font-bold uppercase flex items-center gap-3 tracking-widest text-green-500">
                   <i className="fa-solid fa-trophy"></i>
                   Completed Battles
                 </h3>
                 {filteredMatches.filter(m => m.status === 'COMPLETED').length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredMatches.filter(m => m.status === 'COMPLETED').map(m => (
-                      <div key={m.id} className="relative group">
-                        <MatchCard
+                  matchViewMode === 'grid' ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {filteredMatches.filter(m => m.status === 'COMPLETED').map(m => (
+                        <div key={m.id} className="relative group">
+                          <MatchCard
+                            match={m}
+                            teamA={m.teamA}
+                            teamB={m.teamB}
+                            isAdmin={isAdmin}
+                            onUpdate={updateMatch}
+                          />
+                          {isAdmin && (
+                            <button onClick={() => handleDeleteMatch(m.id)} className="absolute top-4 left-1/2 transform -translate-x-1/2 text-slate-500 hover:text-red-500 transition-colors p-2 glass rounded-full shadow-lg opacity-0 group-hover:opacity-100">
+                              <i className="fa-solid fa-xmark"></i>
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {filteredMatches.filter(m => m.status === 'COMPLETED').map(m => (
+                        <MatchListItem
+                          key={m.id}
                           match={m}
                           teamA={m.teamA}
                           teamB={m.teamB}
                           isAdmin={isAdmin}
                           onUpdate={updateMatch}
+                          onDelete={handleDeleteMatch}
                         />
-                        {isAdmin && (
-                          <button onClick={() => handleDeleteMatch(m.id)} className="absolute top-4 right-4 text-slate-500 hover:text-red-500 transition-colors p-2 glass rounded-full shadow-lg opacity-0 group-hover:opacity-100">
-                            <i className="fa-solid fa-xmark"></i>
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )
                 ) : (
                   <div className="py-12 text-center glass rounded-[3rem] border-2 border-dashed border-slate-800 uppercase text-[10px] font-black text-slate-700 tracking-widest">
                     No Completed Matches Yet
