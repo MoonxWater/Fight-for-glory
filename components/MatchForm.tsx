@@ -18,8 +18,8 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
     status: match?.status || 'UPCOMING' as const,
     gender: match?.gender || 'boys',
     venue: match?.venue || 'Playground-1',
-    batchA: match?.details?.batchA || '24',
-    batchB: match?.details?.batchB || '24',
+    batchA: match?.details?.batchA || '25',
+    batchB: match?.details?.batchB || '25',
     matchType: match?.details?.matchType || 'normal',
     details: (() => {
       const d = match?.details || {} as any;
@@ -452,10 +452,10 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
             required
           >
             <option value="">Select Match Type</option>
-            <option value="normal">Normal</option>
-            <option value="quarter final">Quarter Final</option>
-            <option value="semi final">Semi Final</option>
-            <option value="final">Final</option>
+            <option value="Eliminator">Eliminator</option>
+            <option value="Quarter Final">Quarter Final</option>
+            <option value="Semi Final">Semi Final</option>
+            <option value="Final">Final</option>
           </select>
         </div>
 
@@ -563,8 +563,8 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 >
                   <option value="">Select Innings</option>
                   <option value="None">None</option>
-                  <option value="TeamA">Team A</option>
-                  <option value="TeamB">Team B</option>
+                  <option value="TeamA">{formData.teamA}</option>
+                  <option value="TeamB">{formData.teamB}</option>
                 </select>
               </div>
               <div className="md:col-span-2">

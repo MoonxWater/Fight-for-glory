@@ -16,16 +16,34 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
   const [isUpdateMode, setIsUpdateMode] = React.useState(false);
   const [updateMessage, setUpdateMessage] = React.useState('');
 
+  <style jsx>{`
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0.3; }
+    }
+    .blink-update-mode {
+      animation: blink 2s infinite;
+    }
+  `}</style>
+
   // Helper function to get team color based on batch
   const getTeamColor = (team: string, batch?: string) => {
     if (!batch) return 'bg-slate-800 border-white/5';
     
     switch (batch) {
-      case '25': return 'bg-black border-black'; // Black for 2025 batch
+      case '25': return 'bg-[#010101] border-black'; // Black for 2025 batch
       case '24': return 'bg-blue-600 border-blue-500'; // Blue for 2024 batch  
-      case '23': return 'bg-white border-white'; // White for 2023 batch
-      case '22': return 'bg-slate-300 border-slate-200'; // Light gray for 2022 batch
+      case '23': return 'bg-[#f38548] border-[#f38548]'; // Brown for 2023 batch
+      case '22': return 'bg-white border-black text-black'; // White for 2022 batch
       default: return 'bg-slate-800 border-white/5'; // Default
+    }
+  };
+
+  // Helper function to get text color based on batch
+  const getTextColor = (batch?: string) => {
+    switch (batch) {
+      case '22': return 'text-black'; // Black text for white background
+      default: return 'text-white'; // White text for all other backgrounds
     }
   };
 
@@ -87,12 +105,23 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'LIVE': return 'text-rose-500 animate-pulse';
-      case 'COMPLETED': return 'text-slate-500';
-      default: return 'text-indigo-400';
+      case 'COMPLETED': return 'text-green-500';
+      case 'UPCOMING': return 'text-blue-500';
+      default: return 'text-slate-500';
     }
   };
 
-  const getGenderColor = (gender: string) => {
+  const getMatchTypeColor = (matchType?: string) => {
+    switch (matchType?.toLowerCase()) {
+      case 'eliminator': return 'bg-purple-500/20 border-purple-500/30 text-purple-400';
+      case 'quarter final': return 'bg-orange-500/20 border-orange-500/30 text-orange-400';
+      case 'semi final': return 'bg-amber-500/20 border-amber-500/30 text-amber-400';
+      case 'final': return 'bg-rose-500/20 border-rose-500/30 text-rose-400';
+      default: return 'bg-slate-500/20 border-slate-500/30 text-slate-400';
+    }
+  };
+
+  const getGenderColor = (gender?: string) => {
     switch (gender?.toLowerCase()) {
       case 'boys': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       case 'girls': return 'bg-pink-500/20 text-pink-400 border-pink-500/30';
@@ -127,7 +156,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Overs</span>
                 <span className="font-mono text-white">{details.oversA || 0}</span>
@@ -141,7 +170,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Overs</span>
                 <span className="font-mono text-white">{details.oversB || 0}</span>
@@ -157,7 +186,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Wickets</span>
                 <span className="font-mono text-white">{details.wicketsA || 0}</span>
@@ -171,7 +200,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Wickets</span>
                 <span className="font-mono text-white">{details.wicketsB || 0}</span>
@@ -193,7 +222,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     );
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-rose-500/10 rounded-lg border border-rose-500/20 ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-rose-500/20' : ''}`}
+                className={`flex justify-between items-center p-2 bg-rose-500/10 rounded-lg border border-rose-500/20 ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-rose-500/20 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider text-rose-400">Current Innings</span>
                 <span className="font-mono text-rose-400">
@@ -217,7 +246,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Half Time</span>
                 <span className="font-mono text-white">{details.halfTimeScoreA || 0}</span>
@@ -231,7 +260,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Half Time</span>
                 <span className="font-mono text-white">{details.halfTimeScoreB || 0}</span>
@@ -247,7 +276,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     });
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-rose-500/10 rounded-lg border border-rose-500/20 ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-rose-500/20' : ''}`}
+                className={`flex justify-between items-center p-2 bg-rose-500/10 rounded-lg border border-rose-500/20 ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-rose-500/20 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider text-rose-400">Period</span>
                 <span className="font-mono text-rose-400">{details.currentPeriod}</span>
@@ -269,7 +298,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Sets Won</span>
                 <span className="font-mono text-white">{details.setsWonA || 0}</span>
@@ -283,7 +312,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Sets Won</span>
                 <span className="font-mono text-white">{details.setsWonB || 0}</span>
@@ -300,7 +329,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                       }
                     }
                   }}
-                  className={`flex justify-between items-center p-2 bg-rose-500/10 rounded-lg border border-rose-500/20 ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-rose-500/20' : ''}`}
+                  className={`flex justify-between items-center p-2 bg-rose-500/10 rounded-lg border border-rose-500/20 ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-rose-500/20 animate-pulse' : ''}`}
                 >
                   <span className="font-black uppercase tracking-wider text-rose-400">Current Set</span>
                   <span className="font-mono text-rose-400">{details.currentSetScoreA}</span>
@@ -314,7 +343,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                       }
                     }
                   }}
-                  className={`flex justify-between items-center p-2 bg-rose-500/10 rounded-lg border border-rose-500/20 ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-rose-500/20' : ''}`}
+                  className={`flex justify-between items-center p-2 bg-rose-500/10 rounded-lg border border-rose-500/20 ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-rose-500/20 animate-pulse' : ''}`}
                 >
                   <span className="font-black uppercase tracking-wider text-rose-400">Current Set</span>
                   <span className="font-mono text-rose-400">{details.currentSetScoreB}</span>
@@ -337,7 +366,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Sets Won</span>
                 <span className="font-mono text-white">{details.setsWonA || 0}</span>
@@ -351,7 +380,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Sets Won</span>
                 <span className="font-mono text-white">{details.setsWonB || 0}</span>
@@ -368,7 +397,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                       }
                     }
                   }}
-                  className={`flex justify-between items-center p-2 bg-rose-500/10 rounded-lg border border-rose-500/20 ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-rose-500/20' : ''}`}
+                  className={`flex justify-between items-center p-2 bg-rose-500/10 rounded-lg border border-rose-500/20 ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-rose-500/20 animate-pulse' : ''}`}
                 >
                   <span className="font-black uppercase tracking-wider text-rose-400">Current Set</span>
                   <span className="font-mono text-rose-400">{details.currentSetScoreA}</span>
@@ -382,7 +411,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                       }
                     }
                   }}
-                  className={`flex justify-between items-center p-2 bg-rose-500/10 rounded-lg border border-rose-500/20 ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-rose-500/20' : ''}`}
+                  className={`flex justify-between items-center p-2 bg-rose-500/10 rounded-lg border border-rose-500/20 ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-rose-500/20 animate-pulse' : ''}`}
                 >
                   <span className="font-black uppercase tracking-wider text-rose-400">Current Set</span>
                   <span className="font-mono text-rose-400">{details.currentSetScoreB}</span>
@@ -405,7 +434,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Raid Points</span>
                 <span className="font-mono text-white">{details.raidPointsA || 0}</span>
@@ -419,7 +448,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Raid Points</span>
                 <span className="font-mono text-white">{details.raidPointsB || 0}</span>
@@ -435,7 +464,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Tackle Points</span>
                 <span className="font-mono text-white">{details.tacklePointsA || 0}</span>
@@ -449,7 +478,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Tackle Points</span>
                 <span className="font-mono text-white">{details.tacklePointsB || 0}</span>
@@ -470,7 +499,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                   }
                 }
               }}
-              className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+              className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
             >
               <span className="font-black uppercase tracking-wider">Distance</span>
               <span className="font-mono text-white">{details.distance || 0}m</span>
@@ -490,7 +519,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                   }
                 }
               }}
-              className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+              className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
             >
               <span className="font-black uppercase tracking-wider">Rounds</span>
               <span className="font-mono text-white">{details.roundsCompleted || 0}</span>
@@ -511,7 +540,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Innings</span>
                 <span className="font-mono text-white">{details.inningsA || 0}</span>
@@ -525,7 +554,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Innings</span>
                 <span className="font-mono text-white">{details.inningsB || 0}</span>
@@ -547,7 +576,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Coins</span>
                 <span className="font-mono text-white">{details.coinsA || 0}</span>
@@ -561,7 +590,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Coins</span>
                 <span className="font-mono text-white">{details.coinsB || 0}</span>
@@ -582,7 +611,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                   }
                 }
               }}
-              className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+              className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
             >
               <span className="font-black uppercase tracking-wider">Moves</span>
               <span className="font-mono text-white">{details.movesPlayed || 0}</span>
@@ -603,7 +632,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Boards Won</span>
                 <span className="font-mono text-white">{details.boardsWonA || 0}</span>
@@ -617,7 +646,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     }
                   }
                 }}
-                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
+                className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 animate-pulse' : ''}`}
               >
                 <span className="font-black uppercase tracking-wider">Boards Won</span>
                 <span className="font-mono text-white">{details.boardsWonB || 0}</span>
@@ -705,11 +734,42 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
             </div>
           )}
         </div>
-        <span className={`text-[10px] font-black uppercase tracking-widest ${getStatusColor(match.status)}`}>
+        <span className={`text-[10px] font-black uppercase tracking-widest ${getStatusColor(match.status)} ${isUpdateMode && isAdmin ? 'cursor-pointer hover:opacity-80' : ''}`}
+          onClick={() => {
+            if (isUpdateMode && isAdmin) {
+              const newStatus = match.status === 'UPCOMING' ? 'LIVE' : match.status === 'LIVE' ? 'COMPLETED' : 'UPCOMING';
+              onUpdate(match.id, { status: newStatus });
+            }
+          }}
+        >
           {match.status === 'LIVE' && <i className="fa-solid fa-circle text-[6px] mr-1.5 mb-0.5"></i>}
           {match.status}
         </span>
       </div>
+
+      {/* Match Type Pill */}
+      {match.details?.matchType && (
+        <div className="mb-4">
+          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getMatchTypeColor(match.details.matchType)} ${isUpdateMode && isAdmin ? 'cursor-pointer hover:opacity-80' : 'Eliminator'}`}
+            onClick={() => {
+              if (isUpdateMode && isAdmin) {
+                const types = ['Eliminator', 'Quarter Final', 'Semi Final', 'Final'];
+                showDropdown(
+                  match.details.matchType,
+                  types,
+                  'Match Type',
+                  (selection) => {
+                    onUpdate(match.id, { details: { ...match.details, matchType: selection } });
+                  }
+                );
+              }
+            }}
+          >
+            <i className="fa-solid fa-trophy text-[8px]"></i>
+            {match.details.matchType}
+          </span>
+        </div>
+      )}
 
       {/* Gender Pill */}
       {match.gender && (
@@ -725,10 +785,21 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
         <div className="flex flex-col items-center text-center flex-1">
           <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl mb-3 border border-white/5 relative ${
             getTeamColor(teamA, match.details?.batchA)
-          }`}>
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white text-sm ${getTeamColor(teamA, match.details?.batchA)} relative`}>
+          } ${isUpdateMode && isAdmin ? 'cursor-pointer hover:opacity-80' : ''}`}
+            onClick={() => {
+              if (isUpdateMode && isAdmin) {
+                const batches = ['22', '23', '24', '25'];
+                const batchLabels = ['2022 Batch', '2023 Batch', '2024 Batch', '2025 Batch'];
+                showDropdown(match.details?.batchA || '25', batches, 'Team A Batch', (newBatch) => {
+                  onUpdate(match.id, { 
+                    details: { ...match.details, batchA: newBatch }
+                  });
+                });
+              }
+            }}>
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${getTextColor(match.details?.batchA)} relative`}>
               <div className="w-full h-full rounded-md flex items-center justify-center relative">
-                <div className="absolute top-0 left-0 right-0 h-2 bg-white rounded-t-md"></div>
+                {/* <div className="absolute top-0 left-0 right-0 h-2 bg-white rounded-t-md"></div> */}
               </div>
               {match.status === 'COMPLETED' && match.details?.winner === teamA && (
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -782,10 +853,21 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
         <div className="flex flex-col items-center text-center flex-1">
           <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl mb-3 border border-white/5 relative ${
             getTeamColor(teamB, match.details?.batchB)
-          }`}>
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white text-sm ${getTeamColor(teamB, match.details?.batchB)} relative`}>
+          } ${isUpdateMode && isAdmin ? 'cursor-pointer hover:opacity-80' : ''}`}
+            onClick={() => {
+              if (isUpdateMode && isAdmin) {
+                const batches = ['22', '23', '24', '25'];
+                const batchLabels = ['2022 Batch', '2023 Batch', '2024 Batch', '2025 Batch'];
+                showDropdown(match.details?.batchB || '24', batches, 'Team B Batch', (newBatch) => {
+                  onUpdate(match.id, { 
+                    details: { ...match.details, batchB: newBatch }
+                  });
+                });
+              }
+            }}>
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${getTextColor(match.details?.batchB)} relative`}>
               <div className="w-full h-full rounded-md flex items-center justify-center relative">
-                <div className="absolute top-0 left-0 right-0 h-2 bg-white rounded-t-md"></div>
+                {/* <div className="absolute top-0 left-0 right-0 h-2 bg-white rounded-t-md"></div> */}
               </div>
               {match.status === 'COMPLETED' && match.details?.winner === teamB && (
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -824,7 +906,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
           <div className="flex items-center justify-center gap-2 mb-2">
             <i className="fa-solid fa-trophy text-amber-400 text-lg"></i>
             <span className="text-[10px] font-black uppercase tracking-wider text-amber-400">
-              Winner {isUpdateMode && isAdmin && <span className="text-xs ml-2">(Click to change)</span>}
+              Winner 
             </span>
           </div>
           <div className="font-oswald text-xl font-bold text-white uppercase tracking-tight">
@@ -876,11 +958,11 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
                     if (e.target.value) {
                       onUpdate(match.id, { 
                         status: 'COMPLETED',
-                        details: { ...match.details, winner: e.target.value }
+                        details: { winner: e.target.value }
                       });
                     }
                   }}
-                  className="flex-1 py-2 px-3 bg-slate-700 border border-slate-600 rounded-xl text-[10px] font-medium text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  className={`flex-1 py-2 px-3 bg-slate-700 border border-slate-600 rounded-xl text-[10px] font-medium text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent ${isUpdateMode && isAdmin ? 'animate-pulse' : ''}`}
                   defaultValue=""
                 >
                   <option value="" disabled>Declare Winner</option>
@@ -890,16 +972,6 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, teamA, teamB, isAdm
               </div>
             </div>
           )}
-          
-          <button
-            onClick={() => {
-              const newStatus = match.status === 'UPCOMING' ? 'LIVE' : match.status === 'LIVE' ? 'COMPLETED' : 'UPCOMING';
-              onUpdate(match.id, { status: newStatus });
-            }}
-            className="w-full py-2 px-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] transition-all text-white"
-          >
-            Switch State: {match.status}
-          </button>
         </div>
       )}
     </div>
