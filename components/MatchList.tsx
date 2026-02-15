@@ -21,7 +21,9 @@ export const MatchList: React.FC<MatchListProps> = ({ matches, onEdit, onDelete,
     const statusMatch = !filterStatus || match.status === filterStatus;
     const genderMatch = !filterGender || match.gender === filterGender;
     const venueMatch = !filterVenue || match.venue === filterVenue;
-    const batchMatch = !filterBatch || match.batch === filterBatch;
+    const batchMatch = !filterBatch ||
+      (match.batchA === filterBatch) ||
+      (match.batchB === filterBatch);
     return sportMatch && statusMatch && genderMatch && venueMatch && batchMatch;
   });
 

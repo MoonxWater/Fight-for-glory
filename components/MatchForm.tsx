@@ -18,8 +18,8 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
     status: match?.status || 'UPCOMING' as const,
     gender: match?.gender || 'boys',
     venue: match?.venue || 'Playground-1',
-    batchA: match?.details?.batchA || '25',
-    batchB: match?.details?.batchB || '25',
+    batchA: match?.batchA || '25',
+    batchB: match?.batchB || '25',
     matchType: match?.details?.matchType || 'normal',
     details: (() => {
       const d = match?.details || {} as any;
@@ -45,34 +45,34 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
           defaultDetails.wicketsB = 0;
           defaultDetails.winner = 'None';
           break;
-        case 'Football': 
-          defaultDetails.halfTimeScoreA = 0; 
-          defaultDetails.halfTimeScoreB = 0; 
+        case 'Football':
+          defaultDetails.halfTimeScoreA = 0;
+          defaultDetails.halfTimeScoreB = 0;
           defaultDetails.winner = 'None';
           break;
-        case 'Volleyball': 
-          defaultDetails.setsWonA = 0; 
-          defaultDetails.setsWonB = 0; 
+        case 'Volleyball':
+          defaultDetails.setsWonA = 0;
+          defaultDetails.setsWonB = 0;
           defaultDetails.winner = 'None';
           break;
-        case 'Kabaddi': 
-          defaultDetails.pointsA = 0; 
-          defaultDetails.pointsB = 0; 
+        case 'Kabaddi':
+          defaultDetails.pointsA = 0;
+          defaultDetails.pointsB = 0;
           defaultDetails.winner = 'None';
           break;
-        case 'Race': 
-          defaultDetails.distance = 100; 
+        case 'Race':
+          defaultDetails.distance = 100;
           defaultDetails.winner = 'None';
           break;
-        case 'Musical Chair': 
-          defaultDetails.roundsCompleted = 0; 
+        case 'Musical Chair':
+          defaultDetails.roundsCompleted = 0;
           defaultDetails.winner = 'None';
           break;
-        case 'Needle & Thread': 
-          defaultDetails.completed = false; 
+        case 'Needle & Thread':
+          defaultDetails.completed = false;
           defaultDetails.winner = 'None';
           break;
-        default: 
+        default:
           defaultDetails.winner = 'None';
           break;
       }
@@ -88,7 +88,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
     }));
   };
 
-  const handleDetailsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDetailsChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -118,158 +118,106 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
 
     try {
       // Construct strict details payload based on sport
-      const finalData = { ...formData };
-      const d = finalData.details;
+      const { batchA, batchB, scoreA, scoreB, details, ...rest } = formData;
+      const finalData: any = {
+        ...rest,
+        batchA,
+        batchB,
+        scoreA: Number(scoreA),
+        scoreB: Number(scoreB),
+        details: {}
+      };
 
-      if (finalData.sport === 'Cricket') {
+      const d = details;
+      if (formData.sport === 'Cricket') {
         finalData.details = {
           oversA: Math.floor(Number(d.oversA) || 0),
           wicketsA: Math.floor(Number(d.wicketsA) || 0),
           oversB: Math.floor(Number(d.oversB) || 0),
           wicketsB: Math.floor(Number(d.wicketsB) || 0),
-          currentInnings: d.currentInnings || 'None',
-          winner: d.winner || 'None',
-          batchA: formData.batchA,
-          batchB: formData.batchB,
-          matchType: formData.matchType
+          currentInnings: d.currentInnings || 'None'
         };
-      } else if (finalData.sport === 'Football') {
+      } else if (formData.sport === 'Football') {
         finalData.details = {
           halfTimeScoreA: Math.floor(Number(d.halfTimeScoreA) || 0),
           halfTimeScoreB: Math.floor(Number(d.halfTimeScoreB) || 0),
-          currentPeriod: d.currentPeriod || '1st Half',
-          winner: d.winner || 'None',
-          batchA: formData.batchA,
-          batchB: formData.batchB,
-          matchType: formData.matchType
+          currentPeriod: d.currentPeriod || '1st Half'
         };
-      } else if (finalData.sport === 'Volleyball') {
+      } else if (formData.sport === 'Volleyball') {
         finalData.details = {
           setsWonA: Math.floor(Number(d.setsWonA) || 0),
           setsWonB: Math.floor(Number(d.setsWonB) || 0),
           currentSetScoreA: Math.floor(Number(d.currentSetScoreA) || 0),
-          currentSetScoreB: Math.floor(Number(d.currentSetScoreB) || 0),
-          winner: d.winner || 'None',
-          batchA: formData.batchA,
-          batchB: formData.batchB,
-          matchType: formData.matchType
+          currentSetScoreB: Math.floor(Number(d.currentSetScoreB) || 0)
         };
-      } else if (finalData.sport === 'Badminton') {
+      } else if (formData.sport === 'Badminton') {
         finalData.details = {
           setsWonA: Math.floor(Number(d.setsWonA) || 0),
           setsWonB: Math.floor(Number(d.setsWonB) || 0),
           currentSetScoreA: Math.floor(Number(d.currentSetScoreA) || 0),
-          currentSetScoreB: Math.floor(Number(d.currentSetScoreB) || 0),
-          winner: d.winner || 'None',
-          batchA: formData.batchA,
-          batchB: formData.batchB,
-          matchType: formData.matchType
+          currentSetScoreB: Math.floor(Number(d.currentSetScoreB) || 0)
         };
-      } else if (finalData.sport === 'Kabaddi') {
+      } else if (formData.sport === 'Kabaddi') {
         finalData.details = {
           raidPointsA: Math.floor(Number(d.raidPointsA) || 0),
           raidPointsB: Math.floor(Number(d.raidPointsB) || 0),
           tacklePointsA: Math.floor(Number(d.tacklePointsA) || 0),
-          tacklePointsB: Math.floor(Number(d.tacklePointsB) || 0),
-          winner: d.winner || 'None',
-          batchA: formData.batchA,
-          batchB: formData.batchB,
-          matchType: formData.matchType
+          tacklePointsB: Math.floor(Number(d.tacklePointsB) || 0)
         };
-      } else if (finalData.sport === 'Musical Chair') {
+      } else if (formData.sport === 'Musical Chair') {
         finalData.details = {
-          roundsCompleted: Math.floor(Number(d.roundsCompleted) || 0),
-          winner: d.winner || 'None',
-          batchA: formData.batchA,
-          batchB: formData.batchB,
-          matchType: formData.matchType
+          roundsCompleted: Math.floor(Number(d.roundsCompleted) || 0)
         };
-      } else if (finalData.sport === 'Kho-Kho') {
+      } else if (formData.sport === 'Kho-Kho') {
         finalData.details = {
           inningsA: Math.floor(Number(d.inningsA) || 0),
-          inningsB: Math.floor(Number(d.inningsB) || 0),
-          winner: d.winner || 'None',
-          batchA: formData.batchA,
-          batchB: formData.batchB,
-          matchType: formData.matchType
+          inningsB: Math.floor(Number(d.inningsB) || 0)
         };
-      } else if (finalData.sport === 'LUDO') {
+      } else if (formData.sport === 'LUDO') {
         finalData.details = {
           coinsA: Math.floor(Number(d.coinsA) || 0),
-          coinsB: Math.floor(Number(d.coinsB) || 0),
-          winner: d.winner || 'None',
-          batchA: formData.batchA,
-          batchB: formData.batchB,
-          matchType: formData.matchType
+          coinsB: Math.floor(Number(d.coinsB) || 0)
         };
-      } else if (finalData.sport === 'Chess') {
+      } else if (formData.sport === 'Chess') {
         finalData.details = {
-          movesPlayed: Math.floor(Number(d.movesPlayed) || 0),
-          winner: d.winner || 'None',
-          batchA: formData.batchA,
-          batchB: formData.batchB,
-          matchType: formData.matchType
+          movesPlayed: Math.floor(Number(d.movesPlayed) || 0)
         };
-      } else if (finalData.sport === 'Carrom') {
+      } else if (formData.sport === 'Carrom') {
         finalData.details = {
           boardsWonA: Math.floor(Number(d.boardsWonA) || 0),
-          boardsWonB: Math.floor(Number(d.boardsWonB) || 0),
-          winner: d.winner || 'None',
-          batchA: formData.batchA,
-          batchB: formData.batchB,
-          matchType: formData.matchType
+          boardsWonB: Math.floor(Number(d.boardsWonB) || 0)
         };
-      } else if (finalData.sport === 'Race') {
+      } else if (formData.sport === 'Race') {
         finalData.details = {
-          distance: Number(d.distance) || 100,
-          winner: d.winner || 'None',
-          batchA: formData.batchA,
-          batchB: formData.batchB,
-          matchType: formData.matchType
+          distance: Number(d.distance) || 100
         };
-      } else if (finalData.sport === 'Skipping') {
+      } else if (formData.sport === 'Skipping') {
         finalData.details = {
-          jumps: Math.floor(Number(d.jumps) || 0),
-          winner: d.winner || 'None',
-          batchA: formData.batchA,
-          batchB: formData.batchB,
-          matchType: formData.matchType
+          jumps: Math.floor(Number(d.jumps) || 0)
         };
-      } else if (finalData.sport === 'Tug of War') {
+      } else if (formData.sport === 'Tug of War') {
         finalData.details = {
           roundsWonA: Math.floor(Number(d.roundsWonA) || 0),
-          roundsWonB: Math.floor(Number(d.roundsWonB) || 0),
-          winner: d.winner || 'None',
-          batchA: formData.batchA,
-          batchB: formData.batchB,
-          matchType: formData.matchType
+          roundsWonB: Math.floor(Number(d.roundsWonB) || 0)
         };
-      } else if (finalData.sport === 'Shot Put') {
+      } else if (formData.sport === 'Shot Put') {
         finalData.details = {
           distanceA: Number(d.distanceA) || 0,
-          distanceB: Number(d.distanceB) || 0,
-          winner: d.winner || 'None',
-          batchA: formData.batchA,
-          batchB: formData.batchB,
-          matchType: formData.matchType
+          distanceB: Number(d.distanceB) || 0
         };
-      } else if (finalData.sport === 'Needle & Thread') {
+      } else if (formData.sport === 'Needle & Thread') {
         finalData.details = {
-          completed: Boolean(d.completed),
-          winner: d.winner || 'None',
-          batchA: formData.batchA,
-          batchB: formData.batchB,
-          matchType: formData.matchType
+          completed: Boolean(d.completed)
         };
-      } else if (finalData.sport === 'Spoon Race') {
+      } else if (formData.sport === 'Spoon Race') {
         finalData.details = {
-          roundsCompleted: Math.floor(Number(d.roundsCompleted) || 0),
-          winner: d.winner || 'None',
-          batchA: formData.batchA,
-          batchB: formData.batchB,
-          matchType: formData.matchType
+          roundsCompleted: Math.floor(Number(d.roundsCompleted) || 0)
         };
       }
+
+      // Add common optional fields
+      if (d.winner) finalData.details.winner = d.winner;
+      if (formData.matchType) finalData.details.matchType = formData.matchType;
 
       const success = await onSubmit(finalData);
       if (!success) {
@@ -459,36 +407,32 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
           </select>
         </div>
 
-        {/* Scores - Only show when editing */}
-        {match && (
-          <>
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Team A Score
-              </label>
-              <input
-                type="number"
-                name="scoreA"
-                value={formData.scoreA}
-                onChange={handleInputChange}
-                                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white placeholder-slate-400 focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-              />
-            </div>
+        {/* Scores */}
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-2">
+            Team A Score
+          </label>
+          <input
+            type="number"
+            name="scoreA"
+            value={formData.scoreA}
+            onChange={handleInputChange}
+            className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white placeholder-slate-400 focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+          />
+        </div>
 
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Team B Score
-              </label>
-              <input
-                type="number"
-                name="scoreB"
-                value={formData.scoreB}
-                onChange={handleInputChange}
-                                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white placeholder-slate-400 focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-              />
-            </div>
-          </>
-        )}
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-2">
+            Team B Score
+          </label>
+          <input
+            type="number"
+            name="scoreB"
+            value={formData.scoreB}
+            onChange={handleInputChange}
+            className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white placeholder-slate-400 focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+          />
+        </div>
       </div>
 
       {/* Dynamic Details Section Based on Sport Schema */}
@@ -509,7 +453,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   value={formData.details.oversA || 0}
                   onChange={handleDetailsChange}
                   step="0.1"
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 />
               </div>
               <div>
@@ -521,7 +465,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   name="wicketsA"
                   value={formData.details.wicketsA || 0}
                   onChange={handleDetailsChange}
-                                    max="10"
+                  max="10"
                   className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 />
               </div>
@@ -535,25 +479,25 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   value={formData.details.oversB || 0}
                   onChange={handleDetailsChange}
                   step="0.1"
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Team B Wickets 
+                  Team B Wickets
                 </label>
                 <input
                   type="number"
                   name="wicketsB"
                   value={formData.details.wicketsB || 0}
                   onChange={handleDetailsChange}
-                                    max="10"
+                  max="10"
                   className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 />
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Current Innings *
+                  Current Innings
                 </label>
                 <select
                   name="currentInnings"
@@ -563,8 +507,8 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 >
                   <option value="">Select Innings</option>
                   <option value="None">None</option>
-                  <option value="TeamA">{formData.teamA}</option>
-                  <option value="TeamB">{formData.teamB}</option>
+                  <option value={formData.teamA}>{formData.teamA}</option>
+                  <option value={formData.teamB}>{formData.teamB}</option>
                 </select>
               </div>
               <div className="md:col-span-2">
@@ -591,33 +535,33 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Half Time Score A *
+                  Half Time Score A
                 </label>
                 <input
                   type="number"
                   name="halfTimeScoreA"
                   value={formData.details.halfTimeScoreA || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Half Time Score B *
+                  Half Time Score B
                 </label>
                 <input
                   type="number"
                   name="halfTimeScoreB"
                   value={formData.details.halfTimeScoreB || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Current Period *
+                  Current Period
                 </label>
                 <select
                   name="currentPeriod"
@@ -656,53 +600,53 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Sets Won A *
+                  Sets Won A
                 </label>
                 <input
                   type="number"
                   name="setsWonA"
                   value={formData.details.setsWonA || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Sets Won B *
+                  Sets Won B
                 </label>
                 <input
                   type="number"
                   name="setsWonB"
                   value={formData.details.setsWonB || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Current Set Score A *
+                  Current Set Score A
                 </label>
                 <input
                   type="number"
                   name="currentSetScoreA"
                   value={formData.details.currentSetScoreA || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Current Set Score B *
+                  Current Set Score B
                 </label>
                 <input
                   type="number"
                   name="currentSetScoreB"
                   value={formData.details.currentSetScoreB || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -730,53 +674,53 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Sets Won A *
+                  Sets Won A
                 </label>
                 <input
                   type="number"
                   name="setsWonA"
                   value={formData.details.setsWonA || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Sets Won B *
+                  Sets Won B
                 </label>
                 <input
                   type="number"
                   name="setsWonB"
                   value={formData.details.setsWonB || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Current Set Score A *
+                  Current Set Score A
                 </label>
                 <input
                   type="number"
                   name="currentSetScoreA"
                   value={formData.details.currentSetScoreA || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Current Set Score B *
+                  Current Set Score B
                 </label>
                 <input
                   type="number"
                   name="currentSetScoreB"
                   value={formData.details.currentSetScoreB || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -804,53 +748,53 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Raid Points A *
+                  Raid Points A
                 </label>
                 <input
                   type="number"
                   name="raidPointsA"
                   value={formData.details.raidPointsA || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Raid Points B *
+                  Raid Points B
                 </label>
                 <input
                   type="number"
                   name="raidPointsB"
                   value={formData.details.raidPointsB || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Tackle Points A *
+                  Tackle Points A
                 </label>
                 <input
                   type="number"
                   name="tacklePointsA"
                   value={formData.details.tacklePointsA || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Tackle Points B *
+                  Tackle Points B
                 </label>
                 <input
                   type="number"
                   name="tacklePointsB"
                   value={formData.details.tacklePointsB || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -876,36 +820,36 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
           {/* Musical Chair Fields */}
           {formData.sport === 'Musical Chair' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Rounds Completed *
-              </label>
-              <input
-                type="number"
-                name="roundsCompleted"
-                value={formData.details.roundsCompleted || 0}
-                onChange={handleDetailsChange}
-                                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                required
-              />
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Rounds Completed
+                </label>
+                <input
+                  type="number"
+                  name="roundsCompleted"
+                  value={formData.details.roundsCompleted || 0}
+                  onChange={handleDetailsChange}
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Winner
+                </label>
+                <select
+                  name="winner"
+                  value={formData.details.winner || 'None'}
+                  onChange={handleDetailsChange}
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                >
+                  <option value="">Select Winner</option>
+                  <option value="None">None</option>
+                  <option value={formData.teamA}>{formData.teamA}</option>
+                  <option value={formData.teamB}>{formData.teamB}</option>
+                </select>
+              </div>
             </div>
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Winner
-              </label>
-              <select
-                name="winner"
-                value={formData.details.winner || 'None'}
-                onChange={handleDetailsChange}
-                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-              >
-                <option value="">Select Winner</option>
-                <option value="None">None</option>
-                <option value={formData.teamA}>{formData.teamA}</option>
-                <option value={formData.teamB}>{formData.teamB}</option>
-              </select>
-            </div>
-          </div>
           )}
 
           {/* Kho-Kho Fields */}
@@ -920,7 +864,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   name="inningsA"
                   value={formData.details.inningsA || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -933,27 +877,27 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   name="inningsB"
                   value={formData.details.inningsB || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Winner
-              </label>
-              <select
-                name="winner"
-                value={formData.details.winner || 'None'}
-                onChange={handleDetailsChange}
-                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-              >
-                <option value="">Select Winner</option>
-                <option value="None">None</option>
-                <option value={formData.teamA}>{formData.teamA}</option>
-                <option value={formData.teamB}>{formData.teamB}</option>
-              </select>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Winner
+                </label>
+                <select
+                  name="winner"
+                  value={formData.details.winner || 'None'}
+                  onChange={handleDetailsChange}
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                >
+                  <option value="">Select Winner</option>
+                  <option value="None">None</option>
+                  <option value={formData.teamA}>{formData.teamA}</option>
+                  <option value={formData.teamB}>{formData.teamB}</option>
+                </select>
+              </div>
             </div>
-          </div>
           )}
 
           {/* LUDO Fields */}
@@ -968,7 +912,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   name="coinsA"
                   value={formData.details.coinsA || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -981,7 +925,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   name="coinsB"
                   value={formData.details.coinsB || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -999,7 +943,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 name="movesPlayed"
                 value={formData.details.movesPlayed || 0}
                 onChange={handleDetailsChange}
-                                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 required
               />
             </div>
@@ -1017,7 +961,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   name="boardsWonA"
                   value={formData.details.boardsWonA || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -1030,7 +974,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   name="boardsWonB"
                   value={formData.details.boardsWonB || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -1049,7 +993,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 value={formData.details.distance || 100}
                 onChange={handleDetailsChange}
                 step="0.1"
-                                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 required
               />
             </div>
@@ -1066,7 +1010,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 name="jumps"
                 value={formData.details.jumps || 0}
                 onChange={handleDetailsChange}
-                                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 required
               />
             </div>
@@ -1084,7 +1028,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   name="roundsWonA"
                   value={formData.details.roundsWonA || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -1097,7 +1041,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   name="roundsWonB"
                   value={formData.details.roundsWonB || 0}
                   onChange={handleDetailsChange}
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -1117,7 +1061,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   value={formData.details.distanceA || 0}
                   onChange={handleDetailsChange}
                   step="0.1"
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -1131,7 +1075,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                   value={formData.details.distanceB || 0}
                   onChange={handleDetailsChange}
                   step="0.1"
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -1168,7 +1112,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ match, sportOptions, onSub
                 name="roundsCompleted"
                 value={formData.details.roundsCompleted || 0}
                 onChange={handleDetailsChange}
-                                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 required
               />
             </div>

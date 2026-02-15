@@ -1,0 +1,13 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/health/route": "app/api/health/route.js",
+  "/api/matches/[match_id]/route": "app/api/matches/[match_id]/route.js",
+  "/api/matches/gender/[gender]/[sport]/[match_id]/route": "app/api/matches/gender/[gender]/[sport]/[match_id]/route.js",
+  "/api/matches/route": "app/api/matches/route.js",
+  "/api/matches/sport/[sport]/route": "app/api/matches/sport/[sport]/route.js",
+  "/api/matches/upcoming/route": "app/api/matches/upcoming/route.js",
+  "/api/route": "app/api/route.js",
+  "/api/sports/games/[gender]/route": "app/api/sports/games/[gender]/route.js",
+  "/page": "app/page.js"
+}

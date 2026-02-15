@@ -23,51 +23,95 @@ export interface Match {
   scoreA: number;
   scoreB: number;
   status: MatchStatus;
+  summary?: string;
   createdAt?: string;
   updatedAt?: string;
   gender?: 'boys' | 'girls';
   venue?: string;
+  batchA?: string;
+  batchB?: string;
   category?: string; // Kept for backward compatibility if needed
   startTime?: string;
   details?: {
     // Cricket
-    overs?: number;
-    wickets?: number; // Format: 0
-    wicketsA?: number; // Helper for UI, might not be in API
+    oversA?: number;
+    wicketsA?: number;
+    oversB?: number;
     wicketsB?: number;
+    currentInnings?: string;
 
     // Football
     halfTimeScoreA?: number;
     halfTimeScoreB?: number;
+    currentPeriod?: string;
 
-    // Volleyball
+    // Volleyball & Badminton
     setsWonA?: number;
     setsWonB?: number;
+    currentSetScoreA?: number;
+    currentSetScoreB?: number;
 
     // Kabaddi
-    pointsA?: number;
-    pointsB?: number;
+    raidPointsA?: number;
+    raidPointsB?: number;
+    tacklePointsA?: number;
+    tacklePointsB?: number;
 
-    // Musical Chair
+    // Musical Chair & Spoon Race
     roundsCompleted?: number;
+
+    // Kho-Kho
+    inningsA?: number;
+    inningsB?: number;
+
+    // LUDO
+    coinsA?: number;
+    coinsB?: number;
+
+    // Chess
+    movesPlayed?: number;
+
+    // Carrom
+    boardsWonA?: number;
+    boardsWonB?: number;
 
     // Race
     distance?: number;
 
+    // Skipping
+    jumps?: number;
+
+    // Tug of War
+    roundsWonA?: number;
+    roundsWonB?: number;
+
+    // Shot Put
+    distanceA?: number;
+    distanceB?: number;
+
     // Needle & Thread
     completed?: boolean;
 
-    // Winner declaration
-    winner?: string; // Team name of the winner
+    // Legacy/Common
+    overs?: number;
+    wickets?: number;
+    pointsA?: number;
+    pointsB?: number;
+    winner?: string;
 
+    // Note: removed batchA/B from here as they are now top-level
     [key: string]: any;
-  } | {};
+  };
 }
 
 export interface MatchUpdates {
   scoreA?: number;
   scoreB?: number;
   status?: string;
+  summary?: string;
+  batchA?: string;
+  batchB?: string;
+  venue?: string;
   details?: {
     winner?: string;
     [key: string]: any;

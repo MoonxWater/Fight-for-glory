@@ -18,7 +18,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const [editingMatch, setEditingMatch] = useState<Match | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const sportOptions: string[] = [...boysGames, ...girlsGames];
+  const sportOptions = [...new Set([...boysGames, ...girlsGames].map(s => {
+    // Normalize casing and trim whitespace
+    const normalized = s.trim();
+    // Special case for Ludo/LUDO to match constant keys if needed
+    if (normalized.toUpperCase() === 'LUDO') return 'Ludo';
+    // Title case for consistency
+    return normalized.charAt(0).toUpperCase() + normalized.slice(1).toLowerCase();
+  }))].sort() as SportType[];
 
   // Debug: Log the games being fetched
   console.log('Boys games:', boysGames);
