@@ -1,15 +1,14 @@
 
 import { Match, MatchUpdates } from '../types';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+const BASE_URL = '/api';
 
 // Use environment variable for admin key
-let ADMIN_KEY = import.meta.env.VITE_ADMIN_API_KEY || '';
+let ADMIN_KEY = '';
 
 export const setAdminKey = (key: string) => {
   console.log('Setting admin key to:', key);
-  // Always use the configured admin API key for API calls
-  ADMIN_KEY = import.meta.env.VITE_ADMIN_API_KEY || '';
+  ADMIN_KEY = key;
 };
 
 export const getAdminKey = () => ADMIN_KEY;

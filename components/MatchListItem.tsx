@@ -10,487 +10,52 @@ interface MatchListItemProps {
   onDelete?: (matchId: string) => void;
 }
 
-export const MatchListItem: React.FC<MatchListItemProps> = ({ 
-  match, 
-  teamA, 
-  teamB, 
-  isAdmin, 
-  onUpdate, 
-  onDelete 
+export const MatchListItem: React.FC<MatchListItemProps> = ({
+  match,
+  teamA,
+  teamB,
+  isAdmin,
+  onUpdate,
+  onDelete
 }) => {
   const [isUpdateMode, setIsUpdateMode] = useState(false);
   const [updateMessage, setUpdateMessage] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const getStatusColor = (status: string) => {
+  const getStatusStyle = (status: string) => {
     switch (status) {
-      case 'LIVE': return 'text-rose-500';
-      case 'COMPLETED': return 'text-green-500';
-      case 'UPCOMING': return 'text-blue-500';
-      default: return 'text-slate-400';
+      case 'LIVE': return 'bg-rose-500/10 text-rose-500 border-rose-500/20';
+      case 'COMPLETED': return 'bg-green-500/10 text-green-500 border-green-500/20';
+      case 'UPCOMING': return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
+      default: return 'bg-slate-500/10 text-slate-400 border-slate-500/20';
     }
   };
 
-  const getMatchTypeColor = (matchType?: string) => {
+  const getMatchTypeStyle = (matchType?: string) => {
     switch (matchType?.toLowerCase()) {
-      case 'eliminator': return 'bg-purple-500/20 border-purple-500/30 text-purple-400';
-      case 'quarter final': return 'bg-orange-500/20 border-orange-500/30 text-orange-400';
-      case 'semi final': return 'bg-amber-500/20 border-amber-500/30 text-amber-400';
-      case 'final': return 'bg-rose-500/20 border-rose-500/30 text-rose-400';
-      default: return 'bg-slate-500/20 border-slate-500/30 text-slate-400';
+      case 'eliminator': return 'bg-purple-500/10 border-purple-500/20 text-purple-400';
+      case 'quarter final': return 'bg-orange-500/10 border-orange-500/20 text-orange-400';
+      case 'semi final': return 'bg-amber-500/10 border-amber-500/20 text-amber-400';
+      case 'final': return 'bg-rose-500/10 border-rose-500/20 text-rose-400';
+      default: return 'bg-slate-500/10 border-slate-500/20 text-slate-400';
     }
   };
 
-  const getGenderColor = (gender: string) => {
+  const getGenderStyle = (gender: string) => {
     switch (gender) {
-      case 'boys': return 'bg-blue-500/20 border-blue-500/30 text-blue-400';
-      case 'girls': return 'bg-pink-500/20 border-pink-500/30 text-pink-400';
-      default: return 'bg-slate-500/20 border-slate-500/30 text-slate-400';
-    }
-  };
-
-  const getTeamColor = (team: string, isWinner: boolean) => {
-    if (isWinner) return 'text-green-400 font-bold';
-    return 'text-white';
-  };
-
-  const renderSportDetails = () => {
-    const details = match.details || {};
-    
-    switch (match.sport) {
-      case 'Cricket':
-        return (
-          <div className="grid grid-cols-2 gap-4 text-xs">
-            <div className="text-center">
-              <div className="font-bold text-white mb-1">{teamA}</div>
-              <div className="space-y-1">
-                <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newOvers = prompt(`Enter overs for ${teamA}:`, details.oversA || 0);
-                      if (newOvers !== null && !isNaN(Number(newOvers))) {
-                        handleDetailUpdate('oversA', Number(newOvers));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Overs</span>
-                  <span className="font-mono text-white">{details.oversA || 0}</span>
-                </div>
-                <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newWickets = prompt(`Enter wickets for ${teamA}:`, details.wicketsA || 0);
-                      if (newWickets !== null && !isNaN(Number(newWickets))) {
-                        handleDetailUpdate('wicketsA', Number(newWickets));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Wickets</span>
-                  <span className="font-mono text-white">{details.wicketsA || 0}</span>
-                </div>
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="font-bold text-white mb-1">{teamB}</div>
-              <div className="space-y-1">
-                <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newOvers = prompt(`Enter overs for ${teamB}:`, details.oversB || 0);
-                      if (newOvers !== null && !isNaN(Number(newOvers))) {
-                        handleDetailUpdate('oversB', Number(newOvers));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Overs</span>
-                  <span className="font-mono text-white">{details.oversB || 0}</span>
-                </div>
-                <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newWickets = prompt(`Enter wickets for ${teamB}:`, details.wicketsB || 0);
-                      if (newWickets !== null && !isNaN(Number(newWickets))) {
-                        handleDetailUpdate('wicketsB', Number(newWickets));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Wickets</span>
-                  <span className="font-mono text-white">{details.wicketsB || 0}</span>
-                </div>
-              </div>
-            </div>
-            {details.currentInnings && (
-              <div className={`col-span-2 text-center mt-2 ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 p-2 rounded' : ''}`}
-                onClick={(e) => {
-                  if (isUpdateMode && isAdmin) {
-                    const options = ['None', teamA, teamB];
-                    const currentValue = details.currentInnings === 'TeamA' ? teamA : details.currentInnings === 'TeamB' ? teamB : details.currentInnings;
-                    showDropdown(
-                      currentValue,
-                      options,
-                      'Current Innings',
-                      (selection) => {
-                        const newInnings = selection === teamA ? 'TeamA' : selection === teamB ? 'TeamB' : selection;
-                        handleDetailUpdate('currentInnings', newInnings);
-                      }
-                    );
-                  }
-                }}
-              >
-                <span className="text-rose-400">Current: {details.currentInnings === 'TeamA' ? teamA : details.currentInnings === 'TeamB' ? teamB : details.currentInnings}</span>
-              </div>
-            )}
-          </div>
-        );
-      case 'Football':
-        return (
-          <div className="grid grid-cols-2 gap-4 text-xs">
-            <div className="text-center">
-              <div className="font-bold text-white mb-1">{teamA}</div>
-              <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newScore = prompt(`Enter half time score for ${teamA}:`, details.halfTimeScoreA || 0);
-                      if (newScore !== null && !isNaN(Number(newScore))) {
-                        handleDetailUpdate('halfTimeScoreA', Number(newScore));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Half Time</span>
-                  <span className="font-mono text-white">{details.halfTimeScoreA || 0}</span>
-                </div>
-            </div>
-            <div className="text-center">
-              <div className="font-bold text-white mb-1">{teamB}</div>
-              <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newScore = prompt(`Enter half time score for ${teamB}:`, details.halfTimeScoreB || 0);
-                      if (newScore !== null && !isNaN(Number(newScore))) {
-                        handleDetailUpdate('halfTimeScoreB', Number(newScore));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Half Time</span>
-                  <span className="font-mono text-white">{details.halfTimeScoreB || 0}</span>
-                </div>
-            </div>
-            {details.currentPeriod && (
-              <div className={`col-span-2 text-center mt-2 ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 p-2 rounded' : ''}`}
-                onClick={(e) => {
-                  if (isUpdateMode && isAdmin) {
-                    const periods = ['1st', '2nd', 'Extra'];
-                    showDropdown(
-                      details.currentPeriod,
-                      periods,
-                      'Current Period',
-                      (selection) => {
-                        handleDetailUpdate('currentPeriod', selection);
-                      }
-                    );
-                  }
-                }}
-              >
-                <span className="text-slate-400">Period: {details.currentPeriod}</span>
-              </div>
-            )}
-          </div>
-        );
-      case 'Volleyball':
-      case 'Badminton':
-        return (
-          <div className="grid grid-cols-2 gap-4 text-xs">
-            <div className="text-center">
-              <div className="font-bold text-white mb-1">{teamA}</div>
-              <div className="space-y-1">
-                <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newSets = prompt(`Enter sets won for ${teamA}:`, details.setsWonA || 0);
-                      if (newSets !== null && !isNaN(Number(newSets))) {
-                        handleDetailUpdate('setsWonA', Number(newSets));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Sets Won</span>
-                  <span className="font-mono text-white">{details.setsWonA || 0}</span>
-                </div>
-                {details.currentSetScoreA !== undefined && (
-                  <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                    onClick={() => {
-                      if (isUpdateMode && isAdmin) {
-                        const newCurrent = prompt(`Enter current set score for ${teamA}:`, details.currentSetScoreA || 0);
-                        if (newCurrent !== null && !isNaN(Number(newCurrent))) {
-                          handleDetailUpdate('currentSetScoreA', Number(newCurrent));
-                        }
-                      }
-                    }}
-                  >
-                    <span className="font-black uppercase tracking-wider">Current Set</span>
-                    <span className="font-mono text-white">{details.currentSetScoreA}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="font-bold text-white mb-1">{teamB}</div>
-              <div className="space-y-1">
-                <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newSets = prompt(`Enter sets won for ${teamB}:`, details.setsWonB || 0);
-                      if (newSets !== null && !isNaN(Number(newSets))) {
-                        handleDetailUpdate('setsWonB', Number(newSets));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Sets Won</span>
-                  <span className="font-mono text-white">{details.setsWonB || 0}</span>
-                </div>
-                {details.currentSetScoreB !== undefined && (
-                  <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                    onClick={() => {
-                      if (isUpdateMode && isAdmin) {
-                        const newCurrent = prompt(`Enter current set score for ${teamB}:`, details.currentSetScoreB || 0);
-                        if (newCurrent !== null && !isNaN(Number(newCurrent))) {
-                          handleDetailUpdate('currentSetScoreB', Number(newCurrent));
-                        }
-                      }
-                    }}
-                  >
-                    <span className="font-black uppercase tracking-wider">Current Set</span>
-                    <span className="font-mono text-white">{details.currentSetScoreB}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        );
-      case 'Kabaddi':
-        return (
-          <div className="grid grid-cols-2 gap-4 text-xs">
-            <div className="text-center">
-              <div className="font-bold text-white mb-1">{teamA}</div>
-              <div className="space-y-1">
-                <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newRaid = prompt(`Enter raid points for ${teamA}:`, details.raidPointsA || 0);
-                      if (newRaid !== null && !isNaN(Number(newRaid))) {
-                        handleDetailUpdate('raidPointsA', Number(newRaid));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Raid Points</span>
-                  <span className="font-mono text-white">{details.raidPointsA || 0}</span>
-                </div>
-                <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newTackle = prompt(`Enter tackle points for ${teamA}:`, details.tacklePointsA || 0);
-                      if (newTackle !== null && !isNaN(Number(newTackle))) {
-                        handleDetailUpdate('tacklePointsA', Number(newTackle));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Tackle Points</span>
-                  <span className="font-mono text-white">{details.tacklePointsA || 0}</span>
-                </div>
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="font-bold text-white mb-1">{teamB}</div>
-              <div className="space-y-1">
-                <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newRaid = prompt(`Enter raid points for ${teamB}:`, details.raidPointsB || 0);
-                      if (newRaid !== null && !isNaN(Number(newRaid))) {
-                        handleDetailUpdate('raidPointsB', Number(newRaid));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Raid Points</span>
-                  <span className="font-mono text-white">{details.raidPointsB || 0}</span>
-                </div>
-                <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newTackle = prompt(`Enter tackle points for ${teamB}:`, details.tacklePointsB || 0);
-                      if (newTackle !== null && !isNaN(Number(newTackle))) {
-                        handleDetailUpdate('tacklePointsB', Number(newTackle));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Tackle Points</span>
-                  <span className="font-mono text-white">{details.tacklePointsB || 0}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      case 'Kho-Kho':
-        return (
-          <div className="grid grid-cols-2 gap-4 text-xs">
-            <div className="text-center">
-              <div className="font-bold text-white mb-1">{teamA}</div>
-              <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newInnings = prompt(`Enter innings for ${teamA}:`, details.inningsA || 0);
-                      if (newInnings !== null && !isNaN(Number(newInnings))) {
-                        handleDetailUpdate('inningsA', Number(newInnings));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Innings</span>
-                  <span className="font-mono text-white">{details.inningsA || 0}</span>
-                </div>
-            </div>
-            <div className="text-center">
-              <div className="font-bold text-white mb-1">{teamB}</div>
-              <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newInnings = prompt(`Enter innings for ${teamB}:`, details.inningsB || 0);
-                      if (newInnings !== null && !isNaN(Number(newInnings))) {
-                        handleDetailUpdate('inningsB', Number(newInnings));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Innings</span>
-                  <span className="font-mono text-white">{details.inningsB || 0}</span>
-                </div>
-            </div>
-          </div>
-        );
-      case 'LUDO':
-        return (
-          <div className="grid grid-cols-2 gap-4 text-xs">
-            <div className="text-center">
-              <div className="font-bold text-white mb-1">{teamA}</div>
-              <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newCoins = prompt(`Enter coins for ${teamA}:`, details.coinsA || 0);
-                      if (newCoins !== null && !isNaN(Number(newCoins))) {
-                        handleDetailUpdate('coinsA', Number(newCoins));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Coins</span>
-                  <span className="font-mono text-white">{details.coinsA || 0}</span>
-                </div>
-            </div>
-            <div className="text-center">
-              <div className="font-bold text-white mb-1">{teamB}</div>
-              <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newCoins = prompt(`Enter coins for ${teamB}:`, details.coinsB || 0);
-                      if (newCoins !== null && !isNaN(Number(newCoins))) {
-                        handleDetailUpdate('coinsB', Number(newCoins));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Coins</span>
-                  <span className="font-mono text-white">{details.coinsB || 0}</span>
-                </div>
-            </div>
-          </div>
-        );
-      case 'Carrom':
-        return (
-          <div className="grid grid-cols-2 gap-4 text-xs">
-            <div className="text-center">
-              <div className="font-bold text-white mb-1">{teamA}</div>
-              <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newBoards = prompt(`Enter boards won for ${teamA}:`, details.boardsA || 0);
-                      if (newBoards !== null && !isNaN(Number(newBoards))) {
-                        handleDetailUpdate('boardsA', Number(newBoards));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Boards Won</span>
-                  <span className="font-mono text-white">{details.boardsA || 0}</span>
-                </div>
-            </div>
-            <div className="text-center">
-              <div className="font-bold text-white mb-1">{teamB}</div>
-              <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newBoards = prompt(`Enter boards won for ${teamB}:`, details.boardsB || 0);
-                      if (newBoards !== null && !isNaN(Number(newBoards))) {
-                        handleDetailUpdate('boardsB', Number(newBoards));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Boards Won</span>
-                  <span className="font-mono text-white">{details.boardsB || 0}</span>
-                </div>
-            </div>
-          </div>
-        );
-      case 'Chess':
-        return (
-          <div className="grid grid-cols-2 gap-4 text-xs">
-            <div className="text-center">
-              <div className="font-bold text-white mb-1">{teamA}</div>
-              <div className={`flex justify-between items-center p-2 bg-slate-800/50 rounded-lg ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50' : ''}`}
-                  onClick={() => {
-                    if (isUpdateMode && isAdmin) {
-                      const newMoves = prompt(`Enter moves played:`, details.movesPlayed || 0);
-                      if (newMoves !== null && !isNaN(Number(newMoves))) {
-                        handleDetailUpdate('movesPlayed', Number(newMoves));
-                      }
-                    }
-                  }}
-                >
-                  <span className="font-black uppercase tracking-wider">Moves</span>
-                  <span className="font-mono text-white">{details.movesPlayed || 0}</span>
-                </div>
-            </div>
-            <div className="text-center">
-              <div className="font-bold text-white mb-1">{teamB}</div>
-              <div className="text-slate-400">Opponent</div>
-            </div>
-          </div>
-        );
-      default:
-        return <div className="text-xs text-slate-400">Standard match format</div>;
+      case 'boys': return 'text-blue-400';
+      case 'girls': return 'text-pink-400';
+      default: return 'text-slate-400';
     }
   };
 
   const handleStatusClick = () => {
     if (isUpdateMode && isAdmin) {
-      const newStatus = match.status === 'UPCOMING' ? 'LIVE' : match.status === 'LIVE' ? 'COMPLETED' : 'UPCOMING';
-      onUpdate(match.id, { status: newStatus });
+      const statuses: ('UPCOMING' | 'LIVE' | 'COMPLETED')[] = ['UPCOMING', 'LIVE', 'COMPLETED'];
+      const currentIndex = statuses.indexOf(match.status as any);
+      const nextStatus = statuses[(currentIndex + 1) % statuses.length];
+      onUpdate(match.id, { status: nextStatus });
     }
-  };
-
-  const toggleExpanded = () => {
-    setIsExpanded(!isExpanded);
   };
 
   const handleDetailUpdate = (field: string, value: any) => {
@@ -501,232 +66,271 @@ export const MatchListItem: React.FC<MatchListItemProps> = ({
 
   const showDropdown = (currentValue: string, options: string[], label: string, onUpdateValue: (value: string) => void) => {
     const select = document.createElement('select');
-    select.style.position = 'fixed';
-    select.style.top = '50%';
-    select.style.left = '50%';
-    select.style.transform = 'translate(-50%, -50%)';
-    select.style.zIndex = '9999';
-    select.style.fontSize = '16px';
-    select.style.backgroundColor = '#1e293b';
-    select.style.color = 'white';
-    select.style.border = '1px solid #475569';
-    select.style.borderRadius = '8px';
-    select.style.minWidth = '200px';
-    
+    select.className = "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100] bg-slate-900 text-white border border-slate-700 rounded-xl p-4 min-w-[200px] outline-none shadow-2xl transition-all";
+
     options.forEach(option => {
-      const optionElement = document.createElement('option');
-      optionElement.value = option;
-      optionElement.textContent = option;
-      select.appendChild(optionElement);
+      const opt = document.createElement('option');
+      opt.value = option;
+      opt.textContent = option;
+      select.appendChild(opt);
     });
-    
+
     select.value = currentValue;
-    
-    const handleChange = () => {
-      if (select.value && select.value !== currentValue) {
-        onUpdateValue(select.value);
-      }
-      document.body.removeChild(select);
-      document.body.removeChild(overlay);
-    };
-    
+
     const overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.top = '0';
-    overlay.style.left = '0';
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.backgroundColor = 'rgba(0,0,0,0.5)';
-    overlay.style.zIndex = '9998';
-    overlay.onclick = () => {
+    overlay.className = "fixed inset-0 z-[90] bg-black/60 backdrop-blur-sm transition-opacity";
+
+    const close = () => {
       document.body.removeChild(select);
       document.body.removeChild(overlay);
     };
-    
-    select.onchange = handleChange;
-    select.onblur = handleChange;
-    
+
+    select.onchange = () => {
+      onUpdateValue(select.value);
+      close();
+    };
+
+    overlay.onclick = close;
+
     document.body.appendChild(overlay);
     document.body.appendChild(select);
     select.focus();
   };
 
   return (
-    <div className="glass rounded-lg border border-white/10 p-4 hover:border-white/20 transition-all duration-300">
-      {/* Basic Info - Always Visible */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={toggleExpanded}
-            className="p-2 bg-slate-600 hover:bg-slate-500 text-white rounded text-xs font-medium transition-all duration-200"
-          >
-            <i className={`fa-solid ${isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} transition-transform duration-200`}></i>
-          </button>
+    <div className="group relative">
+      <div className={`glass rounded-[2rem] border border-white/5 overflow-hidden transition-all duration-500 hover:border-rose-500/30 ${isExpanded ? 'shadow-2xl shadow-rose-900/10 scale-[1.01]' : 'hover:scale-[1.005]'}`}>
+        {/* Main Content Area */}
+        <div className="p-6 md:p-8 flex flex-col md:flex-row items-center gap-8 md:gap-12">
 
-          <h3 className="font-oswald text-lg font-bold uppercase text-white">
-            {teamA} vs {teamB}
-          </h3>
-          <span 
-            className={`text-sm font-bold uppercase tracking-wider ${getStatusColor(match.status)} ${isUpdateMode && isAdmin ? 'cursor-pointer hover:opacity-80' : ''}`}
-            onClick={handleStatusClick}
-          >
-            {match.status}
-          </span>
-          <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${getGenderColor(match.gender)}`}>
-            {match.gender}
-          </span>
-          {match.details?.matchType && match.details.matchType !== 'normal' && (
-            <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${getMatchTypeColor(match.details.matchType)}`}>
-              <i className="fa-solid fa-trophy text-[8px]"></i>
-              {match.details.matchType}
-            </span>
-          )}
-        </div>
+          {/* Status & Category Side */}
+          <div className="flex flex-row md:flex-col items-center justify-center gap-4 min-w-[100px]">
+            <div
+              onClick={() => {
+                if (isUpdateMode && isAdmin) {
+                  showDropdown(match.status, ['UPCOMING', 'LIVE', 'COMPLETED'], 'Status', (s) => onUpdate(match.id, { status: s as any }));
+                }
+              }}
+              className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${getStatusStyle(match.status)} ${isUpdateMode && isAdmin ? 'cursor-pointer hover:scale-105 active:scale-95' : ''}`}
+            >
+              {match.status === 'LIVE' && <span className="inline-block w-2 h-2 bg-rose-500 rounded-full animate-pulse mr-2"></span>}
+              {match.status}
+            </div>
+            <div className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest ${getGenderStyle(match.gender)}`}>
+              <i className={`fa-solid ${match.gender === 'boys' ? 'fa-mars' : 'fa-venus'}`}></i>
+              {match.gender}
+            </div>
+          </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center">
-            {isAdmin && (
-              <button
+          {/* Teams & Score Center */}
+          <div className="flex-1 w-full grid grid-cols-[1fr,auto,1fr] items-center gap-4 md:gap-8">
+            {/* Team A */}
+            <div className="text-right space-y-2">
+              <div className="flex items-center justify-end gap-2">
+                {match.status === 'COMPLETED' && (
+                  String(match.details?.winner).toUpperCase() === 'TEAMA' ||
+                  String(match.details?.winner).toUpperCase() === teamA.toUpperCase()
+                ) && (
+                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/20 border border-amber-500/30 animate-in fade-in slide-in-from-right duration-500">
+                      <i className="fa-solid fa-crown text-amber-400 text-[12px] drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]"></i>
+                      <span className="text-[10px] font-black text-amber-400 uppercase tracking-[0.1em]">WINNER</span>
+                    </div>
+                  )}
+                <h3 className="font-orbitron text-xl md:text-2xl font-black uppercase tracking-tighter text-white group-hover:glory-gradient transition-colors truncate">
+                  {teamA}
+                </h3>
+              </div>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                BATCH {match.batchA || 'N/A'}
+              </p>
+            </div>
+
+            {/* Score */}
+            <div className="flex items-center gap-4 md:gap-6 px-6 md:px-10 py-3 bg-slate-900/50 rounded-2xl border border-white/5 shadow-inner">
+              <div
+                className={`text-3xl md:text-4xl font-black font-orbitron tabular-nums transition-all ${isUpdateMode && isAdmin ? 'cursor-pointer hover:text-rose-500 hover:scale-110' : 'text-white'}`}
                 onClick={() => {
-                  setIsUpdateMode(!isUpdateMode);
-                  setUpdateMessage(isUpdateMode ? '' : 'Click on details to update');
-                  if (!isUpdateMode) {
-                    setIsExpanded(true); // Auto-expand when entering update mode
+                  if (isUpdateMode && isAdmin) {
+                    const newScore = prompt(`Update Score for ${teamA}:`, String(match.scoreA));
+                    if (newScore !== null && !isNaN(Number(newScore))) onUpdate(match.id, { scoreA: Number(newScore) });
                   }
                 }}
-                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                  isUpdateMode 
-                    ? 'bg-amber-600 hover:bg-amber-500 text-white' 
-                    : 'bg-indigo-600 hover:bg-indigo-500 text-white'
-                }`}
               >
-                {isUpdateMode ? 'Normal' : 'Update'}
+                {match.scoreA}
+              </div>
+              <div className="h-8 md:h-12 w-[1px] bg-white/10"></div>
+              <div
+                className={`text-3xl md:text-4xl font-black font-orbitron tabular-nums transition-all ${isUpdateMode && isAdmin ? 'cursor-pointer hover:text-rose-500 hover:scale-110' : 'text-white'}`}
+                onClick={() => {
+                  if (isUpdateMode && isAdmin) {
+                    const newScore = prompt(`Update Score for ${teamB}:`, String(match.scoreB));
+                    if (newScore !== null && !isNaN(Number(newScore))) onUpdate(match.id, { scoreB: Number(newScore) });
+                  }
+                }}
+              >
+                {match.scoreB}
+              </div>
+            </div>
+
+            {/* Team B */}
+            <div className="text-left space-y-2">
+              <div className="flex items-center justify-start gap-2">
+                <h3 className="font-orbitron text-xl md:text-2xl font-black uppercase tracking-tighter text-white group-hover:glory-gradient transition-colors truncate">
+                  {teamB}
+                </h3>
+                {match.status === 'COMPLETED' && (
+                  String(match.details?.winner).toUpperCase() === 'TEAMB' ||
+                  String(match.details?.winner).toUpperCase() === teamB.toUpperCase()
+                ) && (
+                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/20 border border-amber-500/30 animate-in fade-in slide-in-from-left duration-500">
+                      <i className="fa-solid fa-crown text-amber-400 text-[12px] drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]"></i>
+                      <span className="text-[10px] font-black text-amber-400 uppercase tracking-[0.1em]">WINNER</span>
+                    </div>
+                  )}
+              </div>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                BATCH {match.batchB || 'N/A'}
+              </p>
+            </div>
+          </div>
+
+          {/* Venue & Action Side */}
+          <div className="flex md:flex-col items-center justify-center gap-6 md:gap-4 min-w-[120px]">
+            <div className="text-right md:text-center">
+              <div
+                className={`text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2 group-hover:text-slate-200 transition-colors ${isUpdateMode && isAdmin ? 'cursor-pointer p-1 rounded hover:bg-white/5' : ''}`}
+                onClick={() => {
+                  if (isUpdateMode && isAdmin) {
+                    showDropdown(match.venue || '', ['Playground-1', 'Playground-2', 'Playground-3', 'Playground-4', 'Seminar-Hall'], 'Venue', (v) => onUpdate(match.id, { venue: v }));
+                  }
+                }}
+              >
+                <i className="fa-solid fa-location-dot text-rose-500"></i>
+                {match.venue}
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isExpanded ? 'glory-bg text-white shadow-lg' : 'bg-white/5 text-slate-500 hover:text-white hover:bg-white/10'}`}
+              >
+                <i className={`fa-solid ${isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-xs`}></i>
               </button>
+
+              {isAdmin && (
+                <>
+                  <button
+                    onClick={() => {
+                      setIsUpdateMode(!isUpdateMode);
+                      if (!isUpdateMode) setIsExpanded(true);
+                    }}
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isUpdateMode ? 'bg-amber-500 text-white shadow-lg' : 'bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500 hover:text-white'}`}
+                  >
+                    <i className="fa-solid fa-pen-to-square text-xs"></i>
+                  </button>
+                  <button
+                    onClick={() => onDelete?.(match.id)}
+                    className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all"
+                  >
+                    <i className="fa-solid fa-trash-can text-xs"></i>
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Expanded Info */}
+        <div className={`overflow-hidden transition-all duration-500 ease-in-out border-t border-white/5 bg-slate-900/20 ${isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+          <div className="p-8 space-y-8">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-6">
+                <div className="px-4 py-2 bg-slate-800 rounded-xl border border-white/5">
+                  <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest leading-none block mb-1">Discipline</span>
+                  <span className="text-sm font-bold text-white uppercase tracking-tighter orbitron">{match.sport}</span>
+                </div>
+                {match.details?.matchType && (
+                  <div
+                    onClick={() => {
+                      if (isUpdateMode && isAdmin) {
+                        showDropdown(match.details?.matchType || '', ['Eliminator', 'Quarter Final', 'Semi Final', 'Final'], 'Match Type', (t) => handleDetailUpdate('matchType', t));
+                      }
+                    }}
+                    className={`px-4 py-2 rounded-xl border ${getMatchTypeStyle(match.details.matchType)} ${isUpdateMode && isAdmin ? 'cursor-pointer hover:opacity-80' : ''}`}
+                  >
+                    <span className="text-[10px] font-black uppercase tracking-widest leading-none block mb-1 opacity-60">Competition</span>
+                    <span className="text-sm font-bold uppercase tracking-tighter orbitron">{match.details.matchType}</span>
+                  </div>
+                )}
+              </div>
+
+              {isUpdateMode && (
+                <div className="flex items-center gap-3 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+                  <i className="fa-solid fa-circle-info text-amber-500 animate-pulse"></i>
+                  <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Update Mode Active: Click fields to edit</span>
+                </div>
+              )}
+            </div>
+
+            {/* Sport Specific Details */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Object.entries(match.details || {}).map(([key, value]) => {
+                if (['batchA', 'batchB', 'matchType', 'winner'].includes(key)) return null;
+                return (
+                  <div
+                    key={key}
+                    onClick={() => {
+                      if (isUpdateMode && isAdmin) {
+                        if (key === 'currentInnings' || key === 'currentPeriod' || key === 'completed') {
+                          const options = key === 'currentInnings' ? [teamA, teamB] :
+                            key === 'currentPeriod' ? ['1st Half', '2nd Half', 'Extra'] :
+                              ['True', 'False'];
+                          showDropdown(String(value), options, key, (val) => {
+                            let finalVal: any = val;
+                            if (key === 'currentInnings') finalVal = val === teamA ? 'TeamA' : 'TeamB';
+                            if (key === 'completed') finalVal = val === 'True';
+                            handleDetailUpdate(key, finalVal);
+                          });
+                        } else {
+                          const newVal = prompt(`Update ${key}:`, String(value));
+                          if (newVal !== null) handleDetailUpdate(key, isNaN(Number(newVal)) ? newVal : Number(newVal));
+                        }
+                      }
+                    }}
+                    className={`p-5 rounded-2xl bg-slate-900/50 border border-white/5 flex items-center justify-between group/field transition-all ${isUpdateMode && isAdmin ? 'cursor-pointer hover:border-amber-500/30 hover:bg-slate-800' : ''}`}
+                  >
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                    <span className="font-orbitron font-bold text-white uppercase text-sm">
+                      {key === 'currentInnings' ?
+                        (String(value).toUpperCase() === 'TEAMA' ? teamA :
+                          String(value).toUpperCase() === 'TEAMB' ? teamB : String(value)) : String(value)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {match.status === 'COMPLETED' && match.details?.winner && isAdmin && isUpdateMode && (
+              <div className="flex justify-center pt-6">
+                <div
+                  onClick={() => {
+                    showDropdown(match.details?.winner || '', [teamA, teamB, 'Draw'], 'Winner', (w) => {
+                      const winnerVal = (w === teamA || w.toUpperCase() === 'TEAMA') ? 'TeamA' :
+                        (w === teamB || w.toUpperCase() === 'TEAMB') ? 'TeamB' : w;
+                      handleDetailUpdate('winner', winnerVal);
+                    });
+                  }}
+                  className="px-6 py-3 rounded-2xl bg-amber-500/10 text-amber-500 border border-amber-500/20 cursor-pointer hover:bg-amber-500/20 transition-all flex items-center gap-2 text-xs font-black uppercase tracking-widest"
+                >
+                  <i className="fa-solid fa-pen-to-square"></i>
+                  Change Winner
+                </div>
+              </div>
             )}
           </div>
-          <button
-            onClick={() => onDelete(match.id)}
-            className="p-2 bg-red-600 hover:bg-red-500 text-white rounded text-xs font-medium transition-colors"
-          >
-            <i className="fa-solid fa-xmark"></i>
-          </button>
         </div>
       </div>
-      
-      {/* Basic Match Info */}
-      <div className="flex items-center gap-4 text-sm text-slate-400 mb-3">
-        <span className="font-medium">{match.sport}</span>
-        <span>•</span>
-        <span className={`font-medium ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 p-2 rounded' : ''}`}
-              onClick={() => {
-                if (isUpdateMode && isAdmin) {
-                  const venues = ['Playground-1', 'Playground-2', 'Playground-3', 'Playground-4', 'Seminar-Hall'];
-                  showDropdown(
-                    match.venue || 'Playground-1',
-                    venues,
-                    'Venue',
-                    (selection) => {
-                      onUpdate(match.id, { venue: selection });
-                    }
-                  );
-                }
-              }}
-        >
-          {match.venue}
-        </span>
-      </div>
-
-      {/* Score Display */}
-      <div className="flex items-center justify-center gap-8 py-3 bg-slate-800/50 rounded-lg mb-3">
-        <div className={`text-center ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 p-2 rounded' : ''}`}
-              onClick={() => {
-                if (isUpdateMode && isAdmin) {
-                  const newScore = prompt(`Enter score for ${teamA}:`, match.scoreA);
-                  if (newScore !== null && !isNaN(Number(newScore))) {
-                    onUpdate(match.id, { scoreA: Number(newScore) });
-                  }
-                }
-              }}
-        >
-          <div className={`text-2xl font-bold ${getTeamColor(teamA, match.status === 'COMPLETED' && match.details?.winner === teamA)}`}>
-            {match.scoreA}
-          </div>
-        </div>
-        <div className="text-xl text-slate-500 font-bold">VS</div>
-        <div className={`text-center ${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 p-2 rounded' : ''}`}
-              onClick={() => {
-                if (isUpdateMode && isAdmin) {
-                  const newScore = prompt(`Enter score for ${teamB}:`, match.scoreB);
-                  if (newScore !== null && !isNaN(Number(newScore))) {
-                    onUpdate(match.id, { scoreB: Number(newScore) });
-                  }
-                }
-              }}
-        >
-          <div className={`text-2xl font-bold ${getTeamColor(teamB, match.status === 'COMPLETED' && match.details?.winner === teamB)}`}>
-            {match.scoreB}
-          </div>
-        </div>
-      </div>
-
-      {/* Expanded Details */}
-      {isExpanded && (
-        <div className="space-y-3">
-          {/* Update Message */}
-          {isUpdateMode && updateMessage && (
-            <div className="p-2 bg-amber-500/20 border border-amber-500/30 rounded-lg text-center">
-              <span className="text-xs font-medium text-amber-400">{updateMessage}</span>
-            </div>
-          )}
-
-          {/* Sport Details */}
-          <div className="p-3 bg-slate-800/30 rounded-lg">
-            <h4 className="text-sm font-bold text-white mb-2">Match Details</h4>
-            {renderSportDetails()}
-          </div>
-
-          {/* Batch Info */}
-          <div className="flex items-center justify-between text-xs text-slate-400">
-            <div className="flex gap-4">
-              <span className={`${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 p-2 rounded' : ''}`}
-                onClick={(e) => {
-                  if (isUpdateMode && isAdmin) {
-                    const batches = ['22', '23', '24', '25'];
-                    showDropdown(
-                      match.details?.batchA || '25',
-                      batches,
-                      'Batch A',
-                      (selection) => {
-                        onUpdate(match.id, { details: { ...match.details, batchA: selection } });
-                      }
-                    );
-                  }
-                }}
-              >
-                {teamA}: {match.details?.batchA || 'N/A'} Batch
-              </span>
-              <span className={`${isUpdateMode && isAdmin ? 'cursor-pointer hover:bg-slate-700/50 p-2 rounded' : ''}`}
-                onClick={(e) => {
-                  if (isUpdateMode && isAdmin) {
-                    const batches = ['22', '23', '24', '25'];
-                    showDropdown(
-                      match.details?.batchB || '25',
-                      batches,
-                      'Batch B',
-                      (selection) => {
-                        onUpdate(match.id, { details: { ...match.details, batchB: selection } });
-                      }
-                    );
-                  }
-                }}
-              >
-                {teamB}: {match.details?.batchB || 'N/A'} Batch
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
