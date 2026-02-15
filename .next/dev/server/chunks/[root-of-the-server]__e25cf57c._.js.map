@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 46, "column": 0}, "map": {"version":3,"sources":["file:///home/moonxwater/projects/branch/Fight-for-glory/app/api/route.ts"],"sourcesContent":["import { NextResponse } from 'next/server';\n\nexport async function GET() {\n    return NextResponse.json({ message: 'Sports MACET API is running' });\n}\n"],"names":[],"mappings":";;;;AAAA;;AAEO,eAAe;IAClB,OAAO,gJAAY,CAAC,IAAI,CAAC;QAAE,SAAS;IAA8B;AACtE"}}]
-}
